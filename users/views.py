@@ -1,8 +1,21 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 
 from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
 
+from .models import Role
+from .permissions import IsManagementRole
+from .serializers import RoleSerializer, UserSerializer, UserRoleUpdateSerializer
+
+
+class UserRoleViewset(ModelViewSet):
+    queryset = Role.objects.all()
+    serializer_class = RoleSerializer
+    permission_classes = [IsManagementRole]
 
 
 class UserRegisterView(APIView):
@@ -36,3 +49,35 @@ class UserRegisterView(APIView):
             is_active=False,
         )
         return Response({'id': user.id}, status=201)
+
+
+class UserListView(APIView):
+    def get(self, request):
+        users = User.objects.all()
+        serialized_users = UserSerializer(users, many=True)
+
+        context = {
+            "success": True,
+            "data": serialized_users.data,
+        }
+        return Response(context, status=status.HTTP_200_OK)
+
+
+class UserUpdateAPIView(APIView):
+    permission_classes = [IsAuthenticated, IsManagementRole]
+
+    def put(self, request, user_id):
+        user = get_object_or_404(User, pk=user_id)
+        serializer = UserRoleUpdateSerializer(user, data=request.data)
+        
+        if serializer.is_valid():
+            serializer.save()
+            context = {
+                "success": True, 
+                "message": 'User and role updated successfully.',
+                "data": serializer.data
+                }
+            return Response(context, status=status.HTTP_200_OK)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
