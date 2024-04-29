@@ -22,10 +22,24 @@ class BranchSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class ProductSerializer(serializers.ModelSerializer):
-    branch = StatusSerializer()
+class ProductReadSerializer(serializers.ModelSerializer):
+    branch = BranchSerializer()
 
     class Meta:
         model = Product
+        fields = "__all__"
+
+
+class ProductWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = "__all__"
+
+
+class SizeReadSerializer(serializers.ModelSerializer):
+    paper = ProductReadSerializer()
+
+    class Meta:
+        model = Size
         fields = "__all__"
 
