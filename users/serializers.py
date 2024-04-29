@@ -1,25 +1,32 @@
 from rest_framework import serializers
 
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 
 from .models import Role
+
+
+User = get_user_model()
+
+
+
+class UserListSerializer(serializers.ModelSerializer):
+    role = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ['username', 'is_active', 'role']
+    
+    def get_role(self, obj):
+        if hasattr(obj, 'role'):
+            return obj.role.name
+        return None
+
 
 
 class RoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Role
         fields = '__all__'
-
-
-class UserSerializer(serializers.ModelSerializer):
-    role = serializers.SerializerMethodField()
-    class Meta:
-        model = User
-        fields = ['id', 'username', 'role']
-    
-    def get_role(self, obj):
-        role = Role.objects.get(user=obj)
-        return role.name
 
 
 class UserRoleUpdateSerializer(serializers.ModelSerializer):

@@ -8,7 +8,7 @@ from rest_framework.routers import DefaultRouter
 
 from .views import (
     UserRegisterView, UserRoleViewset,
-    UserUpdateAPIView,
+    UserUpdateAPIView, UserListView,
             )
 
 
@@ -20,6 +20,7 @@ router.register(r'roles', UserRoleViewset, basename='roles')
 urlpatterns = [
     path('register/', UserRegisterView.as_view(), name='register'),
     path('users/update/<int:user_id>/', UserUpdateAPIView.as_view(), name='update-user'),
+    path('list/', UserListView.as_view()),
 
     # router's urls
     path('', include(router.urls)),

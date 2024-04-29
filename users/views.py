@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404
 
 from .models import Role
 from .permissions import IsManagementRole
-from .serializers import RoleSerializer, UserSerializer, UserRoleUpdateSerializer
+from .serializers import RoleSerializer, UserListSerializer, UserRoleUpdateSerializer
 
 
 class UserRoleViewset(ModelViewSet):
@@ -54,7 +54,7 @@ class UserRegisterView(APIView):
 class UserListView(APIView):
     def get(self, request):
         users = User.objects.all()
-        serialized_users = UserSerializer(users, many=True)
+        serialized_users = UserListSerializer(users, many=True)
 
         context = {
             "success": True,
