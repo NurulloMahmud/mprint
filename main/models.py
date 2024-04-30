@@ -1,8 +1,5 @@
 from django.db import models
-from django.contrib.auth import get_user_model
-
-
-User = get_user_model()
+from django.contrib.auth.models import AbstractUser
 
 
 class Branch(models.Model):
@@ -10,6 +7,14 @@ class Branch(models.Model):
 
     def __str__(self) -> str:
         return self.name
+
+
+class CustomUser(AbstractUser):
+    role = models.CharField(
+        max_length=50, null=True, blank=True
+    )
+    is_active = models.BooleanField(default=False)
+    branch = models.ForeignKey(Branch, on_delete=models.CASCADE, null=True, blank=True)
 
 
 class Status(models.Model):
@@ -62,7 +67,7 @@ class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     total_price = models.DecimalField(decimal_places=2, max_digits=10)
     status = models.ForeignKey(Status, on_delete=models.CASCADE)
-    agent = models.ForeignKey(User, on_delete=models.CASCADE)
+    agent = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
 
     def __str__(self) -> str:

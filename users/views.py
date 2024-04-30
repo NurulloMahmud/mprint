@@ -8,7 +8,7 @@ from rest_framework import generics
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 
-from .models import CustomUser
+from main.models import CustomUser
 from .serializers import (
     UserRegistrationSerializer, UserListSerializer,
     UserUpdateSerializer

@@ -3,9 +3,9 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 
-from .models import CustomUser
-
+from main.models import CustomUser
 from main.serializers import BranchSerializer
+
 
 
 User = get_user_model()
