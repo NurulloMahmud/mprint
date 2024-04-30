@@ -18,20 +18,19 @@ from .serializers import (
 )
 
 
-from users.models import Role
-from users.permissions import IsManagementRole
+from users.permissions import IsAdminRole
 
 
 class StatusViewSet(ModelViewSet):
     queryset = Status.objects.all()
     serializer_class = StatusSerializer
-    permission_classes = (IsManagementRole,)
+    permission_classes = (IsAdminRole,)
 
 
 class BranchViewset(ModelViewSet):
     queryset = Branch.objects.all()
     serializer_class = BranchSerializer
-    permission_classes = (IsManagementRole,)
+    permission_classes = (IsAdminRole,)
 
 
 class ProductListCreateView(APIView):
@@ -47,21 +46,12 @@ class ProductListCreateView(APIView):
         return Response(context, status=status.HTTP_200_OK)
     
     def post(self, request):
-        try:
-            user_role = Role.objects.filter(user=request.user)
-            if user_role.name.lower() != "management":
-                context = {
-                    "success": False,
-                    "message": "user is not authorized for this functionality"
-                }
-
-                return Response(context, status=status.HTTP_401_UNAUTHORIZED)
-        except:
+        
+        if not request.user or request.user.role.lower() == "admin":
             context = {
                 "success": False,
-                "message": "user is not authenticated or not assigned a role"
+                "message": "user is not authorized"
             }
-
             return Response(context, status=status.HTTP_401_UNAUTHORIZED)
         
         data = request.data
@@ -100,15 +90,12 @@ class ProductDetailUpdateDestroyView(APIView):
 
     def put(self, request, id: int):
 
-        if not request.user or \
-            not Role.objects.filter(user=request.user).exists() \
-            or Role.objects.filter(user=request.user).name.lower() != "management":
-
+        if not request.user or request.user.role.lower() == "admin":
             context = {
                 "success": False,
                 "message": "user is not authorized"
             }
-            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+            return Response(context, status=status.HTTP_401_UNAUTHORIZED)
         
         product = get_object_or_404(Product, id=id)
         serializer = ProductWriteSerializer(product, data=request.data)
@@ -131,15 +118,12 @@ class ProductDetailUpdateDestroyView(APIView):
     
     def delete(self, request, id: int):
 
-        if not request.user or \
-            not Role.objects.filter(user=request.user).exists() \
-            or Role.objects.filter(user=request.user).name.lower() != "management":
-
+        if not request.user or request.user.role.lower() == "admin":
             context = {
                 "success": False,
                 "message": "user is not authorized"
             }
-            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+            return Response(context, status=status.HTTP_401_UNAUTHORIZED)
         
         product = get_object_or_404(Product, id=id)
         product.delete()

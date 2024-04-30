@@ -1,46 +1,47 @@
 from rest_framework import serializers
 
 from django.contrib.auth import get_user_model
+from django.contrib.auth.password_validation import validate_password
 
-from .models import Role
+from .models import CustomUser
+
+from main.serializers import BranchSerializer
 
 
 User = get_user_model()
 
+class UserRegistrationSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
+    username = serializers.CharField(required=True)
+
+    class Meta:
+        model = User
+        fields = ('username', 'password')
+
+    def validate_username(self, value):
+        # Check for existing username
+        if User.objects.filter(username=value).exists():
+            raise serializers.ValidationError("This username is already in use.")
+        return value
+
+    def create(self, validated_data):
+        user = User.objects.create(
+            username=validated_data['username']
+        )
+        user.set_password(validated_data['password'])
+        user.is_active = False  # Set user as inactive
+        user.save()
+        return user
 
 
 class UserListSerializer(serializers.ModelSerializer):
-    role = serializers.SerializerMethodField()
-
+    branch = BranchSerializer()
     class Meta:
-        model = User
-        fields = ['username', 'is_active', 'role']
-    
-    def get_role(self, obj):
-        if hasattr(obj, 'role'):
-            return obj.role.name
-        return None
+        model = CustomUser
+        fields = ['username', 'is_active', 'branch', 'role']
 
 
-
-class RoleSerializer(serializers.ModelSerializer):
+class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Role
-        fields = '__all__'
-
-
-class UserRoleUpdateSerializer(serializers.ModelSerializer):
-    role = RoleSerializer()
-
-    class Meta:
-        model = User
-        fields = ['is_active', 'role']
-        depth = 1
-
-    def update(self, instance, validated_data):
-        role_data = validated_data.pop('role', {})
-        instance.is_active = validated_data.get('is_active', instance.is_active)
-        instance.save()
-
-        role, created = Role.objects.update_or_create(user=instance, defaults=role_data)
-        return instance
+        model = CustomUser
+        fields = ['username', 'is_active', 'branch', 'role']
