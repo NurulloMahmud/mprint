@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Branch, Status, Product, Inventory, Size, Customer, Order, Service, InventoryOrder, ServiceOrder, Purchase, CustomerDebt, OrderPayment, Debt
+from .models import Branch, Status, Product, Inventory, Size, Customer, Order, Service, InventoryOrder, ServiceOrder, Purchase, CustomerDebt, OrderPayment, Debt, CustomUser
 
 # Register your models here.
 admin.site.register(Branch)
@@ -16,3 +16,4 @@ admin.site.register(Purchase)
 admin.site.register(CustomerDebt)
 admin.site.register(OrderPayment)
 admin.site.register(Debt)
+admin.site.register(CustomUser)
