@@ -49,10 +49,10 @@ class UserListSerializer(serializers.ModelSerializer):
     branch = BranchSerializer()
     class Meta:
         model = CustomUser
-        fields = ['username', 'is_active', 'branch', 'role']
+        fields = ['id', 'username', 'is_active', 'branch', 'role']
 
 
 class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['username', 'is_active', 'branch', 'role']
+        fields = ['id', 'username', 'is_active', 'branch', 'role']
