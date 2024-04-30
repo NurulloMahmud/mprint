@@ -16,6 +16,12 @@ class CustomUser(AbstractUser):
     is_active = models.BooleanField(default=False)
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE, null=True, blank=True)
 
+    def save(self, *args, **kwargs):
+        if not self.branch:  # Check if branch is not set
+            branch, created = Branch.objects.get_or_create(name='Andijon')  # Create Andijon branch if not exists
+            self.branch = branch
+        super().save(*args, **kwargs)
+
 
 class Status(models.Model):
     name = models.CharField(max_length=100)
