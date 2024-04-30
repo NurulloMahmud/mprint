@@ -37,7 +37,7 @@ class UserListView(generics.ListAPIView):
 
 
 class UserUpdateView(generics.UpdateAPIView):
-    queryset = CustomUser.objects.all().values('username', 'is_active', 'role')
+    queryset = CustomUser.objects.all()
     serializer_class = UserUpdateSerializer
     permission_classes = [IsAdminRole]
 
