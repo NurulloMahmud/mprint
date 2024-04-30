@@ -8,7 +8,7 @@ from rest_framework.routers import DefaultRouter
 
 from .views import (
     UserRegisterView, UserUpdateView,
-    UserListView, 
+    UserListView, CustomTokenObtainPairView
             )
 
 
@@ -26,6 +26,6 @@ urlpatterns = [
     path('', include(router.urls)),
 
     # Your other URLs...
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]

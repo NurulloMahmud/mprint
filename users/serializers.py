@@ -6,6 +6,17 @@ from django.contrib.auth.password_validation import validate_password
 from main.models import CustomUser
 from main.serializers import BranchSerializer
 
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework import exceptions
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        # Check if user is active
+        if not self.user.is_active:
+            raise exceptions.AuthenticationFailed('User is not approved by admin yet.')
+        return data
+
 
 
 User = get_user_model()
