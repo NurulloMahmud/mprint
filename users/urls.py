@@ -4,28 +4,19 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
-from rest_framework.routers import DefaultRouter
-
 from .views import (
     UserRegisterView, UserUpdateView,
-    UserListView, CustomTokenObtainPairView
-            )
-
-
-router = DefaultRouter()
-# router.register(r'roles', UserRoleViewset, basename='roles')
+    UserListView
+        )
 
 
 
 urlpatterns = [
     path('register/', UserRegisterView.as_view(), name='register'),
-    path('users/', UserListView.as_view(), name='user-list'),
+    path('list/', UserListView.as_view(), name='user-list'),
     path('update-user/<int:pk>/', UserUpdateView.as_view(), name='user-update'),
 
-    # router's urls
-    path('', include(router.urls)),
-
     # Your other URLs...
-    path('api/token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
