@@ -1,12 +1,11 @@
 from rest_framework import serializers
 from .models import (
     Status, Branch,
-    Product, Inventory,
-    InventoryOrder, Customer,
+    Product, Customer,
     CustomerDebt, Order,
     OrderPayment, ServiceOrder,
     Service, Purchase,
-    Debt, Size,
+    Debt,
 )
 
 
@@ -33,13 +32,5 @@ class ProductReadSerializer(serializers.ModelSerializer):
 class ProductWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = "__all__"
-
-
-class SizeReadSerializer(serializers.ModelSerializer):
-    paper = ProductReadSerializer()
-
-    class Meta:
-        model = Size
         fields = "__all__"
 

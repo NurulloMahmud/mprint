@@ -33,26 +33,11 @@ class Status(models.Model):
 class Product(models.Model):
     name = models.CharField(max_length=100)
     weight = models.FloatField()
+    size = models.CharField(max_length=50, null=True, blank=True)
     cost = models.DecimalField(decimal_places=2, max_digits=10)
     price = models.DecimalField(decimal_places=2, max_digits=10)
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE, null=True, blank=True)
-
-    def __str__(self) -> str:
-        return self.name
-
-
-class Inventory(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
-    quantity = models.IntegerField()
-
-    def __str__(self) -> str:
-        return self.product.name
-
-
-class Size(models.Model):
-    name = models.CharField(max_length=100)
-    paper = models.ForeignKey(Product, on_delete=models.CASCADE)
+    available_qty = models.IntegerField(null=True, blank=True)
 
     def __str__(self) -> str:
         return self.name
@@ -73,7 +58,6 @@ class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     total_price = models.DecimalField(decimal_places=2, max_digits=10)
     status = models.ForeignKey(Status, on_delete=models.CASCADE)
-    agent = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
@@ -88,11 +72,13 @@ class Service(models.Model):
         return self.name
 
 
-class InventoryOrder(models.Model):
+class OrderDetail(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity = models.IntegerField()
-    price = models.DecimalField(decimal_places=2, max_digits=10)
+    num_of_lists = models.IntegerField(null=True, blank=True)
+    possible_defect = models.IntegerField(null=True, blank=True)
+    price_per_list = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
+    price_per_product = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
 
     def __str__(self) -> str:
         return self.order.name
@@ -102,6 +88,7 @@ class ServiceOrder(models.Model):
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
+    total_price = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
 
     def __str__(self) -> str:
         return self.service.name

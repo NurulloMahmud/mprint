@@ -7,14 +7,13 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 
 from .models import (
-    Product, Size,
-    Branch, Status
+    Branch, Status,
+    Product,
 )
 
 from .serializers import (
-    BranchSerializer, StatusSerializer,
-    SizeReadSerializer, ProductReadSerializer,
-    ProductWriteSerializer,
+    BranchSerializer, StatusSerializer, 
+    ProductReadSerializer, ProductWriteSerializer,
 )
 
 
