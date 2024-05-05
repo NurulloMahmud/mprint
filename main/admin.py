@@ -1,10 +1,10 @@
 from django.contrib import admin
-from .models import Branch, Status, Product, Customer, Order, Service, ServiceOrder, Purchase, CustomerDebt, OrderPayment, Debt, CustomUser
+from .models import Branch, Status, Paper, Customer, Order, Service, ServiceOrder, Purchase, CustomerDebt, OrderPayment, Debt, CustomUser
 
 # Register your models here.
 admin.site.register(Branch)
 admin.site.register(Status)
-admin.site.register(Product)
+admin.site.register(Paper)
 admin.site.register(Customer)
 admin.site.register(Order)
 admin.site.register(Service)

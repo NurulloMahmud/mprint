@@ -1,12 +1,17 @@
 from rest_framework import serializers
 from .models import (
     Status, Branch,
-    Product, Customer,
+    Paper, Customer,
     CustomerDebt, Order,
     OrderPayment, ServiceOrder,
     Service, Purchase,
-    Debt,
+    Debt, PaperType
 )
+
+class PaperTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PaperType
+        fields = "__all__"
 
 
 class StatusSerializer(serializers.ModelSerializer):
@@ -21,16 +26,17 @@ class BranchSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class ProductReadSerializer(serializers.ModelSerializer):
+class PaperReadSerializer(serializers.ModelSerializer):
     branch = BranchSerializer()
+    paper_type = PaperTypeSerializer()
 
     class Meta:
-        model = Product
+        model = Paper
         fields = "__all__"
 
 
-class ProductWriteSerializer(serializers.ModelSerializer):
+class PaperWriteSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Product
+        model = Paper
         fields = "__all__"
 

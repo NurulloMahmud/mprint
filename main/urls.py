@@ -5,7 +5,7 @@ from rest_framework.routers import DefaultRouter
 
 from .views import (
     StatusViewSet, BranchViewset,
-    ProductDetailUpdateDestroyView, ProductListCreateView,
+    PaperDetailUpdateDestroyView, PaperListCreateView,
 )
 
 router = DefaultRouter()
@@ -14,8 +14,8 @@ router.register(r'branch', BranchViewset, basename='branch')
 
 
 urlpatterns = [
-    path('product/', ProductListCreateView.as_view()),
-    path('product/<int:id>/', ProductDetailUpdateDestroyView.as_view()),
+    path('paper/', PaperListCreateView.as_view()),
+    path('paper/<int:id>/', PaperDetailUpdateDestroyView.as_view()),
 
     # viewsets endpoints
     path('', include(router.urls))

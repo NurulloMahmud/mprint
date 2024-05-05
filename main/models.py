@@ -9,6 +9,13 @@ class Branch(models.Model):
         return self.name
 
 
+class PaperType(models.Model):
+    name = models.CharField(max_length=150)
+
+    def __str__(self) -> str:
+        return self.name
+
+
 class CustomUser(AbstractUser):
     role = models.CharField(
         max_length=50, null=True, blank=True
@@ -30,23 +37,30 @@ class Status(models.Model):
         return self.name
 
 
-class Product(models.Model):
+class Paper(models.Model):
     name = models.CharField(max_length=100)
-    weight = models.FloatField()
-    size = models.CharField(max_length=50, null=True, blank=True)
+    paper_type = models.ForeignKey(PaperType, on_delete=models.CASCADE, null=True, blank=True)
+    grammaj = models.CharField(max_length=250, null=True, blank=True)
     cost = models.DecimalField(decimal_places=2, max_digits=10)
     price = models.DecimalField(decimal_places=2, max_digits=10)
-    branch = models.ForeignKey(Branch, on_delete=models.CASCADE, null=True, blank=True)
-    available_qty = models.IntegerField(null=True, blank=True)
 
     def __str__(self) -> str:
         return self.name
 
 
+class PaperStock(models.Model):
+    paper = models.ForeignKey(Paper, on_delete=models.CASCADE)
+    branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
+    quantity = models.IntegerField()
+
+    def __str__(self) -> str:
+        return f"{self.paper.name} >>> {self.quantity}"
+
 class Customer(models.Model):
     name = models.CharField(max_length=100)
     phone = models.CharField(max_length=13, null=True, blank=True)
     email = models.EmailField(null=True, blank=True)
+    telegram_id = models.BigIntegerField(null=True, blank=True)
 
     def __str__(self) -> str:
         return self.name
@@ -57,11 +71,21 @@ class Order(models.Model):
     name = models.CharField(max_length=500)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     total_price = models.DecimalField(decimal_places=2, max_digits=10)
+    final_price = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
+    price_per_product = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
     status = models.ForeignKey(Status, on_delete=models.CASCADE)
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
         return self.name
+
+
+class OrderPics(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    pic = models.ImageField()
+
+    def __str__(self) -> str:
+        return self.order.name
 
 
 class Service(models.Model):
@@ -72,9 +96,9 @@ class Service(models.Model):
         return self.name
 
 
-class OrderDetail(models.Model):
+class OrderPaper(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    paper = models.ForeignKey(Paper, on_delete=models.CASCADE)
     num_of_lists = models.IntegerField(null=True, blank=True)
     possible_defect = models.IntegerField(null=True, blank=True)
     price_per_list = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)

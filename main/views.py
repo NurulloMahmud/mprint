@@ -8,12 +8,12 @@ from django.shortcuts import get_object_or_404
 
 from .models import (
     Branch, Status,
-    Product,
+    Paper,
 )
 
 from .serializers import (
     BranchSerializer, StatusSerializer, 
-    ProductReadSerializer, ProductWriteSerializer,
+    PaperReadSerializer, PaperWriteSerializer,
 )
 
 
@@ -32,10 +32,10 @@ class BranchViewset(ModelViewSet):
     permission_classes = (IsAdminRole,)
 
 
-class ProductListCreateView(APIView):
+class PaperListCreateView(APIView):
     def get(self, request):
-        queryset = Product.objects.all()
-        serializer = ProductReadSerializer(queryset, many=True)
+        queryset = Paper.objects.all()
+        serializer = PaperReadSerializer(queryset, many=True)
 
         context = {
             "success": True,
@@ -54,7 +54,7 @@ class ProductListCreateView(APIView):
             return Response(context, status=status.HTTP_401_UNAUTHORIZED)
         
         data = request.data
-        serializer = ProductWriteSerializer(data=data)
+        serializer = PaperWriteSerializer(data=data)
 
         if serializer.is_valid():
             serializer.save()
@@ -75,10 +75,10 @@ class ProductListCreateView(APIView):
         return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ProductDetailUpdateDestroyView(APIView):
+class PaperDetailUpdateDestroyView(APIView):
     def get(self, request, id: int):
-        product = get_object_or_404(Product, id=id)
-        serializer = ProductReadSerializer(product)
+        paper = get_object_or_404(Paper, id=id)
+        serializer = PaperReadSerializer(paper)
 
         context = {
             "success": True,
@@ -96,8 +96,8 @@ class ProductDetailUpdateDestroyView(APIView):
             }
             return Response(context, status=status.HTTP_401_UNAUTHORIZED)
         
-        product = get_object_or_404(Product, id=id)
-        serializer = ProductWriteSerializer(product, data=request.data)
+        paper = get_object_or_404(Paper, id=id)
+        serializer = PaperWriteSerializer(paper, data=request.data)
 
         if serializer.is_valid():
             serializer.save()
@@ -124,8 +124,8 @@ class ProductDetailUpdateDestroyView(APIView):
             }
             return Response(context, status=status.HTTP_401_UNAUTHORIZED)
         
-        product = get_object_or_404(Product, id=id)
-        product.delete()
+        paper = get_object_or_404(Paper, id=id)
+        paper.delete()
 
         context = {
             "success": True,
