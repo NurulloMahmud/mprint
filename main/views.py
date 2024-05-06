@@ -8,12 +8,13 @@ from django.shortcuts import get_object_or_404
 
 from .models import (
     Branch, Status,
-    Paper,
+    Paper, PaperStock
 )
 
 from .serializers import (
     BranchSerializer, StatusSerializer, 
     PaperReadSerializer, PaperWriteSerializer,
+    PaperStockReadSerializer,
 )
 
 
@@ -133,4 +134,10 @@ class PaperDetailUpdateDestroyView(APIView):
         }
 
         return Response(context, status=status.HTTP_204_NO_CONTENT)
+
+
+class PaperStockListCreateView(generics.ListCreateAPIView):
+    queryset = PaperStock.objects.all()
+    serializer_class = PaperStockReadSerializer
+    permission_classes = [IsAdminRole]
 

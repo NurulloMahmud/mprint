@@ -5,7 +5,8 @@ from .models import (
     CustomerDebt, Order,
     OrderPayment, ServiceOrder,
     Service, Purchase,
-    Debt, PaperType
+    Debt, PaperType,
+    PaperStock, OrderPaper
 )
 
 class PaperTypeSerializer(serializers.ModelSerializer):
@@ -40,3 +41,12 @@ class PaperWriteSerializer(serializers.ModelSerializer):
         model = Paper
         fields = "__all__"
 
+
+class PaperStockReadSerializer(serializers.ModelSerializer):
+    paper = PaperReadSerializer()
+    branch = BranchSerializer()
+
+    class Meta:
+        model = PaperStock
+        fields = "__all__"
+    
