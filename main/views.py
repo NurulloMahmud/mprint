@@ -14,7 +14,7 @@ from .models import (
 from .serializers import (
     BranchSerializer, StatusSerializer, 
     PaperReadSerializer, PaperWriteSerializer,
-    PaperStockReadSerializer,
+    PaperStockReadSerializer, PaperStockWriteSerializer
 )
 
 
@@ -139,5 +139,11 @@ class PaperDetailUpdateDestroyView(APIView):
 class PaperStockListCreateView(generics.ListCreateAPIView):
     queryset = PaperStock.objects.all()
     serializer_class = PaperStockReadSerializer
+    permission_classes = [IsAdminRole]
+
+
+class PaperStockUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = PaperStock.objects.all()
+    serializer_class = PaperStockWriteSerializer
     permission_classes = [IsAdminRole]
 

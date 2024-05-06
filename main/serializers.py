@@ -50,3 +50,9 @@ class PaperStockReadSerializer(serializers.ModelSerializer):
         model = PaperStock
         fields = "__all__"
     
+
+class PaperStockWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PaperStock
+        fields = "__all__"
+
