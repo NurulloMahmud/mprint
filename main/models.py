@@ -56,6 +56,7 @@ class PaperStock(models.Model):
     def __str__(self) -> str:
         return f"{self.paper.name} >>> {self.quantity}"
 
+
 class Customer(models.Model):
     name = models.CharField(max_length=100)
     phone = models.CharField(max_length=13, null=True, blank=True)

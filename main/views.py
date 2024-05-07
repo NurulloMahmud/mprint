@@ -6,6 +6,8 @@ from rest_framework import status
 
 from django.shortcuts import get_object_or_404
 
+from drf_yasg.utils import swagger_auto_schema
+
 from .models import (
     Branch, Status,
     Paper, PaperStock,
@@ -37,46 +39,57 @@ class BranchViewset(ModelViewSet):
 
 
 class PaperListCreateView(APIView):
+    
+    @swagger_auto_schema(
+        operation_description="Get the list of all papers.",
+        responses={
+            status.HTTP_200_OK: "Success response description here",
+            status.HTTP_401_UNAUTHORIZED: "User is not authorized",
+        },
+    )
     def get(self, request):
         queryset = Paper.objects.all()
         serializer = PaperReadSerializer(queryset, many=True)
-
         context = {
             "success": True,
             "data": serializer.data
         }
-
         return Response(context, status=status.HTTP_200_OK)
     
+    @swagger_auto_schema(
+        operation_description="Create a new paper entry.",
+        responses={
+            status.HTTP_201_CREATED: "Successfully created",
+            status.HTTP_400_BAD_REQUEST: "Invalid data input or missing field",
+            status.HTTP_401_UNAUTHORIZED: "User is not authorized",
+        },
+    )
     def post(self, request):
-        
         if not request.user or not request.user.role.lower() == "admin":
             context = {
                 "success": False,
-                "message": "user is not authorized"
+                "message": "User is not authorized"
             }
             return Response(context, status=status.HTTP_401_UNAUTHORIZED)
-        
+
         data = request.data
         serializer = PaperWriteSerializer(data=data)
 
         if serializer.is_valid():
             serializer.save()
-
             context = {
                 "success": True,
-                "message": "created successfully",
+                "message": "Created successfully",
                 "data": serializer.data,
             }
-
             return Response(context, status=status.HTTP_201_CREATED)
-        
+
         context = {
             "success": False,
-            "message": "Invalid data input or/and missing filed",
+            "message": "Invalid data input or missing field",
         }
-
         return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class PaperDetailUpdateDestroyView(APIView):
