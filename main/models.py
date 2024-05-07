@@ -70,6 +70,7 @@ class Order(models.Model):
     date = models.DateField(auto_now_add=True)
     name = models.CharField(max_length=500)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    products_qty = models.IntegerField(null=True, blank=True)
     total_price = models.DecimalField(decimal_places=2, max_digits=10)
     final_price = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
     price_per_product = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
