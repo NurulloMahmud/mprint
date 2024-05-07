@@ -50,7 +50,7 @@ class PaperListCreateView(APIView):
     
     def post(self, request):
         
-        if not request.user or request.user.role.lower() == "admin":
+        if not request.user or not request.user.role.lower() == "admin":
             context = {
                 "success": False,
                 "message": "user is not authorized"
