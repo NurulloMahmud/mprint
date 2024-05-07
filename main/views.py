@@ -42,7 +42,13 @@ class BranchViewset(ModelViewSet):
 class PaperListView(generics.ListAPIView):
     queryset = Paper.objects.all()
     serializer_class = PaperReadSerializer
-    permission_classes = IsManagerRole
+    permission_classes = [IsManagerRole]
+
+
+class PaperRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Paper.objects.all()
+    serializer_class = PaperWriteSerializer
+    permission_classes = [IsManagerRole]
 
 
 class PaperCreateView(APIView):
