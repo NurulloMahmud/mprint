@@ -7,6 +7,7 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 
 from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 from .models import (
     Branch, Status,
@@ -38,26 +39,26 @@ class BranchViewset(ModelViewSet):
     permission_classes = (IsAdminRole,)
 
 
-class PaperListCreateView(APIView):
-    
-    @swagger_auto_schema(
-        operation_description="Get the list of all papers.",
-        responses={
-            status.HTTP_200_OK: "Success response description here",
-            status.HTTP_401_UNAUTHORIZED: "User is not authorized",
-        },
-    )
-    def get(self, request):
-        queryset = Paper.objects.all()
-        serializer = PaperReadSerializer(queryset, many=True)
-        context = {
-            "success": True,
-            "data": serializer.data
-        }
-        return Response(context, status=status.HTTP_200_OK)
-    
+class PaperListView(generics.ListAPIView):
+    queryset = Paper.objects.all()
+    serializer_class = PaperReadSerializer
+    permission_classes = IsManagerRole
+
+
+class PaperCreateView(APIView):
     @swagger_auto_schema(
         operation_description="Create a new paper entry.",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['name', 'cost', 'price'],  # Specify the required fields here
+            properties={
+                'name': openapi.Schema(type=openapi.TYPE_STRING, description='Name of the paper'),
+                'paper_type': openapi.Schema(type=openapi.TYPE_INTEGER, description='Foreign key ID of the paper type', format='int32'),
+                'grammaj': openapi.Schema(type=openapi.TYPE_STRING, description='Weight/grammaj of the paper'),
+                'cost': openapi.Schema(type=openapi.TYPE_NUMBER, format='decimal', description='Cost of the paper'),
+                'price': openapi.Schema(type=openapi.TYPE_NUMBER, format='decimal', description='Price of the paper'),
+            }
+        ),
         responses={
             status.HTTP_201_CREATED: "Successfully created",
             status.HTTP_400_BAD_REQUEST: "Invalid data input or missing field",

@@ -5,10 +5,10 @@ from rest_framework.routers import DefaultRouter
 
 from .views import (
     StatusViewSet, BranchViewset,
-    PaperDetailUpdateDestroyView, PaperListCreateView,
+    PaperDetailUpdateDestroyView, PaperCreateView,
     PaperStockListCreateView, PaperStockUpdateDestroyAPIView,
     CustomerViewset, OrderListView,
-    OrderCreateView,
+    OrderCreateView, PaperListView
 )
 
 router = DefaultRouter()
@@ -18,7 +18,8 @@ router.register(r'customer', CustomerViewset, basename='customer')
 
 
 urlpatterns = [
-    path('paper/', PaperListCreateView.as_view()),
+    path('paper/', PaperCreateView.as_view()),
+    path('paper/list/', PaperListView.as_view()),
     path('paper/<int:id>/', PaperDetailUpdateDestroyView.as_view()),
     path('paper/stock/', PaperStockListCreateView.as_view()),
     path('paper/stock/<int:id>/', PaperStockUpdateDestroyAPIView.as_view()),
