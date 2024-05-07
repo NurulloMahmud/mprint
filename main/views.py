@@ -12,7 +12,8 @@ from drf_yasg import openapi
 from .models import (
     Branch, Status,
     Paper, PaperStock,
-    Customer, Order
+    Customer, Order,
+    PaperType
 )
 
 from .serializers import (
@@ -20,7 +21,8 @@ from .serializers import (
     PaperReadSerializer, PaperWriteSerializer,
     PaperStockReadSerializer, PaperStockWriteSerializer,
     CustomerSerializer, OrderReadSerializer,
-    OrderWriteSerializer, OrderCreateSerializer
+    OrderWriteSerializer, OrderCreateSerializer,
+    PaperTypeSerializer,
 )
 
 
@@ -98,7 +100,7 @@ class PaperCreateView(APIView):
         return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
 
-
+#
 class PaperDetailUpdateDestroyView(APIView):
     def get(self, request, id: int):
         paper = get_object_or_404(Paper, id=id)
@@ -185,4 +187,9 @@ class OrderCreateView(generics.CreateAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderCreateSerializer
 
+
+class PaperTypeViewset(ModelViewSet):
+    queryset = PaperType.objects.all()
+    serializer_class = PaperTypeSerializer
+    permission_classes = [IsAdminRole]
 

@@ -154,3 +154,8 @@ class OrderCreateSerializer(serializers.ModelSerializer):
 END OF ORDER CREATION SERIALIZERS
 """
 
+class PaperTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PaperType
+        fields = "__all__"
+

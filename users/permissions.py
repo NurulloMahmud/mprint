@@ -25,11 +25,11 @@ class IsAdminRole(RoleBasedPermission):
     """
     Custom permission to only allow users with the "admin" role to access the view.
     """
-    required_role = ['admin']
+    required_roles = ['admin']
 
 
 class IsManagerRole(RoleBasedPermission):
     """
     Custom permission to only allow users with the "manager" role to access the view.
     """
-    required_role = ['manager', 'admin']
+    required_roles = ['manager', 'admin']
