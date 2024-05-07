@@ -7,7 +7,8 @@ from .views import (
     StatusViewSet, BranchViewset,
     PaperDetailUpdateDestroyView, PaperListCreateView,
     PaperStockListCreateView, PaperStockUpdateDestroyAPIView,
-    CustomerViewset,
+    CustomerViewset, OrderListView,
+    OrderCreateView,
 )
 
 router = DefaultRouter()
@@ -21,6 +22,8 @@ urlpatterns = [
     path('paper/<int:id>/', PaperDetailUpdateDestroyView.as_view()),
     path('paper/stock/', PaperStockListCreateView.as_view()),
     path('paper/stock/<int:id>/', PaperStockUpdateDestroyAPIView.as_view()),
+    path('orders/list/', OrderListView.as_view()),
+    path('orders/create/', OrderCreateView.as_view()),
 
     # viewsets endpoints
     path('', include(router.urls))

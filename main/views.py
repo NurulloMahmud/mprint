@@ -9,18 +9,19 @@ from django.shortcuts import get_object_or_404
 from .models import (
     Branch, Status,
     Paper, PaperStock,
-    Customer,
+    Customer, Order
 )
 
 from .serializers import (
     BranchSerializer, StatusSerializer, 
     PaperReadSerializer, PaperWriteSerializer,
     PaperStockReadSerializer, PaperStockWriteSerializer,
-    CustomerSerializer,
+    CustomerSerializer, OrderReadSerializer,
+    OrderWriteSerializer, 
 )
 
 
-from users.permissions import IsAdminRole
+from users.permissions import IsAdminRole, IsManagerRole
 
 
 class StatusViewSet(ModelViewSet):
@@ -153,4 +154,16 @@ class PaperStockUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
 class CustomerViewset(ModelViewSet):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
+
+
+class OrderListView(generics.ListAPIView):
+    queryset = Order.objects.all()
+    serializer_class = OrderReadSerializer
+
+
+class OrderCreateView(generics.CreateAPIView):
+    queryset = Order.objects.all()
+    serializer_class = OrderWriteSerializer
+    permission_classes = [IsManagerRole]
+
 
