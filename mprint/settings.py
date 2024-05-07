@@ -122,6 +122,11 @@ USE_TZ = True
 
 AUTH_USER_MODEL = "main.CustomUser"
 
+# Absolute path to your media files directory
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# URL endpoint for accessing media files
+MEDIA_URL = '/media/'
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
