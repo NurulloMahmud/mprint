@@ -29,7 +29,6 @@ class BranchSerializer(serializers.ModelSerializer):
 
 
 class PaperReadSerializer(serializers.ModelSerializer):
-    branch = BranchSerializer()
     paper_type = PaperTypeSerializer()
 
     class Meta:
