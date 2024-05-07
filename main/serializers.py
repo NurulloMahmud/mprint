@@ -56,3 +56,26 @@ class PaperStockWriteSerializer(serializers.ModelSerializer):
         model = PaperStock
         fields = "__all__"
 
+
+class CustomerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Customer
+        fields = "__all__"
+
+
+class OrderWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = "__all__"
+
+
+class OrderReadSerializer(serializers.ModelSerializer):
+    customer = CustomerSerializer()
+    status = StatusSerializer()
+    branch = BranchSerializer()
+
+    class Meta:
+        model = Order
+        fields = "__all__"
+        
+

@@ -8,13 +8,15 @@ from django.shortcuts import get_object_or_404
 
 from .models import (
     Branch, Status,
-    Paper, PaperStock
+    Paper, PaperStock,
+    Customer,
 )
 
 from .serializers import (
     BranchSerializer, StatusSerializer, 
     PaperReadSerializer, PaperWriteSerializer,
-    PaperStockReadSerializer, PaperStockWriteSerializer
+    PaperStockReadSerializer, PaperStockWriteSerializer,
+    CustomerSerializer,
 )
 
 
@@ -146,4 +148,9 @@ class PaperStockUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = PaperStock.objects.all()
     serializer_class = PaperStockWriteSerializer
     permission_classes = [IsAdminRole]
+
+
+class CustomerViewset(ModelViewSet):
+    queryset = Customer.objects.all()
+    serializer_class = CustomerSerializer
 
