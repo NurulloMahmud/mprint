@@ -22,9 +22,9 @@ router.register(r'paper_type', PaperTypeViewset, basename='paper_type')
 urlpatterns = [
     path('paper/', PaperCreateView.as_view()),
     path('paper/list/', PaperListView.as_view()),
-    path('paper/<int:id>/', PaperRetrieveUpdateDestroyView.as_view()),
+    path('paper/<int:pk>/', PaperRetrieveUpdateDestroyView.as_view()),
     path('paper/stock/', PaperStockListCreateView.as_view()),
-    path('paper/stock/<int:id>/', PaperStockUpdateDestroyAPIView.as_view()),
+    path('paper/stock/<int:pk>/', PaperStockUpdateDestroyAPIView.as_view()),
     path('orders/list/', OrderListView.as_view()),
     path('orders/create/', OrderCreateView.as_view()),
 
