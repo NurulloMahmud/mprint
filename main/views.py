@@ -17,7 +17,7 @@ from .serializers import (
     PaperReadSerializer, PaperWriteSerializer,
     PaperStockReadSerializer, PaperStockWriteSerializer,
     CustomerSerializer, OrderReadSerializer,
-    OrderWriteSerializer, 
+    OrderWriteSerializer, OrderCreateSerializer
 )
 
 
@@ -163,7 +163,6 @@ class OrderListView(generics.ListAPIView):
 
 class OrderCreateView(generics.CreateAPIView):
     queryset = Order.objects.all()
-    serializer_class = OrderWriteSerializer
-    permission_classes = [IsManagerRole]
+    serializer_class = OrderCreateSerializer
 
 
