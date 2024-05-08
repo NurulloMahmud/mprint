@@ -164,7 +164,11 @@ class PaperDetailUpdateDestroyView(APIView):
 class PaperStockListCreateView(generics.ListCreateAPIView):
     queryset = PaperStock.objects.all()
     serializer_class = PaperStockReadSerializer
-    permission_classes = [IsAdminRole]
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return PaperStockWriteSerializer
+        return PaperStockReadSerializer
 
 
 class PaperStockUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):

@@ -1,5 +1,9 @@
 from django.contrib import admin
-from .models import Branch, Status, Paper, Customer, Order, Service, ServiceOrder, Purchase, CustomerDebt, OrderPayment, Debt, CustomUser, PaperType
+from .models import (
+    Branch, Status, Paper, Customer, 
+    Order, Service, ServiceOrder, Purchase, 
+    CustomerDebt, OrderPayment, Debt, CustomUser, PaperType
+)
 
 # Register your models here.
 admin.site.register(Branch)
