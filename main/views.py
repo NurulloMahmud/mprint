@@ -91,6 +91,9 @@ class PaperCreateView(APIView):
                 "message": "Created successfully",
                 "data": serializer.data,
             }
+            paper_branch = Branch.objects.get(id=1)
+            new_paper = serializer.data
+            PaperStock.objects.create(paper=new_paper, branch=paper_branch, quantity=0)
             return Response(context, status=status.HTTP_201_CREATED)
 
         context = {
