@@ -84,8 +84,6 @@ class PaperCreateView(APIView):
             return Response(context, status=status.HTTP_401_UNAUTHORIZED)
 
         data = request.data
-        branch_id = data.pop('branch_id', None)
-        quantity = data.pop('quantity', 0)
         serializer = PaperWriteSerializer(data=data)
 
         if serializer.is_valid():
@@ -95,9 +93,6 @@ class PaperCreateView(APIView):
                 "message": "Created successfully",
                 "data": serializer.data,
             }
-            new_paper = Paper.objects.get(id=serializer.data['id'])
-            branch = Branch.objects.get(id=branch_id)
-            PaperStock.objects.create(paper=new_paper, quantity=quantity, branch=branch)
             return Response(context, status=status.HTTP_201_CREATED)
 
         context = {
