@@ -6,10 +6,10 @@ from rest_framework.routers import DefaultRouter
 from .views import (
     StatusViewSet, BranchViewset,
     PaperDetailUpdateDestroyView, PaperCreateView,
-    PaperStockListCreateView, PaperStockUpdateDestroyAPIView,
-    CustomerViewset, OrderListView,
+    CustomerViewset, OrderListView, InventoryListAPIView,
     OrderCreateView, PaperListView,
-    PaperTypeViewset, PaperRetrieveUpdateDestroyView
+    PaperTypeViewset, PaperRetrieveUpdateDestroyView,
+    InventoryCreateAPIView, InventoryUpdateDestroyAPIView,
 )
 
 router = DefaultRouter()
@@ -23,10 +23,11 @@ urlpatterns = [
     path('paper/', PaperCreateView.as_view()),
     path('paper/list/', PaperListView.as_view()),
     path('paper/<int:pk>/', PaperRetrieveUpdateDestroyView.as_view()),
-    path('paper/stock/', PaperStockListCreateView.as_view()),
-    path('paper/stock/<int:pk>/', PaperStockUpdateDestroyAPIView.as_view()),
     path('orders/list/', OrderListView.as_view()),
     path('orders/create/', OrderCreateView.as_view()),
+    path('inventory/list/', InventoryListAPIView.as_view()),
+    path('inventory/create/', InventoryCreateAPIView.as_view()),
+    path('inventory/<int:pk>/', InventoryUpdateDestroyAPIView.as_view()),
 
     # viewsets endpoints
     path('', include(router.urls))

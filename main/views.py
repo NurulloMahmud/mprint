@@ -11,18 +11,18 @@ from drf_yasg import openapi
 
 from .models import (
     Branch, Status,
-    Paper, PaperStock,
     Customer, Order,
-    PaperType
+    PaperType, Inventory,
+    Paper,
 )
 
 from .serializers import (
     BranchSerializer, StatusSerializer, 
     PaperReadSerializer, PaperWriteSerializer,
-    PaperStockReadSerializer, PaperStockWriteSerializer,
     CustomerSerializer, OrderReadSerializer,
     OrderWriteSerializer, OrderCreateSerializer,
-    PaperTypeSerializer,
+    PaperTypeSerializer, InventoryReadSerializer,
+    InventoryWriteSerializer, 
 )
 
 
@@ -168,22 +168,6 @@ class PaperDetailUpdateDestroyView(APIView):
         return Response(context, status=status.HTTP_204_NO_CONTENT)
 
 
-class PaperStockListCreateView(generics.ListCreateAPIView):
-    queryset = PaperStock.objects.all()
-    serializer_class = PaperStockReadSerializer
-
-    def get_serializer_class(self):
-        if self.request.method == 'POST':
-            return PaperStockWriteSerializer
-        return PaperStockReadSerializer
-
-
-class PaperStockUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = PaperStock.objects.all()
-    serializer_class = PaperStockWriteSerializer
-    permission_classes = [IsAdminRole]
-
-
 class CustomerViewset(ModelViewSet):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
@@ -203,4 +187,33 @@ class PaperTypeViewset(ModelViewSet):
     queryset = PaperType.objects.all()
     serializer_class = PaperTypeSerializer
     permission_classes = [IsAdminRole]
+
+
+class InventoryListAPIView(generics.ListAPIView):
+    queryset = Inventory.objects.all()
+    serializer_class = InventoryReadSerializer
+    permission_classes = [IsManagerRole]
+
+    def get_serializer_context(self):
+        # Add the request context to the serializer
+        context = super().get_serializer_context()
+        context.update({'request': self.request})
+        return context
+
+
+class InventoryCreateAPIView(generics.CreateAPIView):
+    queryset = Inventory.objects.all()
+    serializer_class = InventoryWriteSerializer
+    permission_classes = [IsAdminRole]
+
+
+class InventoryUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Inventory.objects.all()
+    serializer_class = InventoryWriteSerializer
+    permission_classes = [IsAdminRole]
+
+    def get_serializer(self, *args, **kwargs):
+        if self.request.method == 'GET':
+            return InventoryReadSerializer(*args, **kwargs)
+        return InventoryWriteSerializer(*args, **kwargs)
 

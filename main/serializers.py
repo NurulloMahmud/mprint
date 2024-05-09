@@ -6,8 +6,8 @@ from .models import (
     OrderPayment, ServiceOrder,
     Service, Purchase,
     Debt, PaperType,
-    PaperStock, OrderPaper,
-    OrderPics
+    OrderPaper, OrderPics, 
+    Inventory,
 )
 
 class PaperTypeSerializer(serializers.ModelSerializer):
@@ -39,21 +39,6 @@ class PaperReadSerializer(serializers.ModelSerializer):
 class PaperWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Paper
-        fields = "__all__"
-
-
-class PaperStockReadSerializer(serializers.ModelSerializer):
-    paper = PaperReadSerializer()
-    branch = BranchSerializer()
-
-    class Meta:
-        model = PaperStock
-        fields = "__all__"
-    
-
-class PaperStockWriteSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = PaperStock
         fields = "__all__"
 
 
@@ -152,4 +137,29 @@ class OrderCreateSerializer(serializers.ModelSerializer):
 """
 END OF ORDER CREATION SERIALIZERS
 """
+
+class InventoryReadSerializer(serializers.ModelSerializer):
+    branch = BranchSerializer(read_only=True)
+
+    class Meta:
+        model = Inventory
+        fields = ['id', 'name', 'cost', 'price', 'branch', 'available']
+
+    def to_representation(self, instance):
+        """
+        Modify the serialized data based on the user's role.
+        """
+        data = super().to_representation(instance)
+        request = self.context.get('request')
+
+        if request and request.user.role.lower() != 'admin':
+            data.pop('cost', None)  # Remove 'cost' field if user is not admin
+
+        return data
+
+
+class InventoryWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Inventory
+        fields = "__all__"
 

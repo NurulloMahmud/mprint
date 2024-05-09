@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import (
     Branch, Status, Paper, Customer, 
-    Order, Service, ServiceOrder, Purchase, PaperStock,
+    Order, Service, ServiceOrder, Purchase,
     CustomerDebt, OrderPayment, Debt, CustomUser, PaperType
 )
 
@@ -19,4 +19,3 @@ admin.site.register(OrderPayment)
 admin.site.register(Debt)
 admin.site.register(CustomUser)
 admin.site.register(PaperType)
-admin.site.register(PaperStock)

@@ -43,18 +43,11 @@ class Paper(models.Model):
     grammaj = models.CharField(max_length=250, null=True, blank=True)
     cost = models.DecimalField(decimal_places=2, max_digits=10)
     price = models.DecimalField(decimal_places=2, max_digits=10)
+    branch = models.ForeignKey(Branch, on_delete=models.CASCADE, null=True, blank=True)
+    available_qty = models.IntegerField(null=True, blank=True)
 
     def __str__(self) -> str:
         return self.name
-
-
-class PaperStock(models.Model):
-    paper = models.ForeignKey(Paper, on_delete=models.CASCADE)
-    branch = models.ForeignKey(Branch, on_delete=models.CASCADE, null=True, blank=True)
-    quantity = models.IntegerField()
-
-    def __str__(self) -> str:
-        return f"{self.paper.name} >>> {self.quantity}"
 
 
 class Customer(models.Model):
@@ -157,4 +150,15 @@ class Debt(models.Model):
 
     def __str__(self) -> str:
         return self.purchase.item
+
+
+class Inventory(models.Model):
+    name = models.CharField(max_length=100)
+    cost = models.DecimalField(decimal_places=2, max_digits=10)
+    price = models.DecimalField(decimal_places=2, max_digits=10)
+    branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
+    available = models.IntegerField(default=0)
+
+    def __str__(self) -> str:
+        return self.name
 
