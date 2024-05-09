@@ -30,7 +30,8 @@ class BranchSerializer(serializers.ModelSerializer):
 
 class PaperReadSerializer(serializers.ModelSerializer):
     paper_type = PaperTypeSerializer()
-
+    branch = BranchSerializer()
+    
     class Meta:
         model = Paper
         fields = "__all__"
