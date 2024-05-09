@@ -50,7 +50,7 @@ class Paper(models.Model):
 
 class PaperStock(models.Model):
     paper = models.ForeignKey(Paper, on_delete=models.CASCADE)
-    branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
+    branch = models.ForeignKey(Branch, on_delete=models.CASCADE, null=True, blank=True)
     quantity = models.IntegerField()
 
     def __str__(self) -> str:
