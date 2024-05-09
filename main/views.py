@@ -58,13 +58,15 @@ class PaperCreateView(APIView):
         operation_description="Create a new paper entry.",
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
-            required=['name', 'cost', 'price'],  # Specify the required fields here
+            required=['name', 'cost', 'price', 'branch_id', 'quantity'],  # Specify the required fields here
             properties={
                 'name': openapi.Schema(type=openapi.TYPE_STRING, description='Name of the paper'),
                 'paper_type': openapi.Schema(type=openapi.TYPE_INTEGER, description='Foreign key ID of the paper type', format='int32'),
                 'grammaj': openapi.Schema(type=openapi.TYPE_STRING, description='Weight/grammaj of the paper'),
                 'cost': openapi.Schema(type=openapi.TYPE_NUMBER, format='decimal', description='Cost of the paper'),
                 'price': openapi.Schema(type=openapi.TYPE_NUMBER, format='decimal', description='Price of the paper'),
+                'branch_id': openapi.Schema(type=openapi.TYPE_INTEGER, description='Foreign key ID of the branch', format='int32'),
+                'quantity': openapi.Schema(type=openapi.TYPE_INTEGER, description='Quantity of the paper'),
             }
         ),
         responses={
