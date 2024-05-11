@@ -65,6 +65,12 @@ class OrderReadSerializer(serializers.ModelSerializer):
         fields = "__all__"
         
 
+class ServiceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Service
+        fields = "__all__"
+
+
 """
 SERIALIZERS FOR ORDER CREATION
 """

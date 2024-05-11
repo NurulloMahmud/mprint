@@ -10,6 +10,7 @@ from .views import (
     OrderCreateView, PaperListView,
     PaperTypeViewset, PaperRetrieveUpdateDestroyView,
     InventoryCreateAPIView, InventoryUpdateDestroyAPIView,
+    ServiceViewset
 )
 
 router = DefaultRouter()
@@ -17,6 +18,7 @@ router.register(r'status', StatusViewSet, basename='status')
 router.register(r'branch', BranchViewset, basename='branch')
 router.register(r'customer', CustomerViewset, basename='customer')
 router.register(r'paper_type', PaperTypeViewset, basename='paper_type')
+router.register(r'service', ServiceViewset, basename='service')
 
 
 urlpatterns = [

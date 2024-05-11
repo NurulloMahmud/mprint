@@ -13,7 +13,7 @@ from .models import (
     Branch, Status,
     Customer, Order,
     PaperType, Inventory,
-    Paper,
+    Paper, Service
 )
 
 from .serializers import (
@@ -22,7 +22,7 @@ from .serializers import (
     CustomerSerializer, OrderReadSerializer,
     OrderWriteSerializer, OrderCreateSerializer,
     PaperTypeSerializer, InventoryReadSerializer,
-    InventoryWriteSerializer, 
+    InventoryWriteSerializer, ServiceSerializer
 )
 
 
@@ -211,4 +211,10 @@ class InventoryUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
         if self.request.method == 'GET':
             return InventoryReadSerializer(*args, **kwargs)
         return InventoryWriteSerializer(*args, **kwargs)
+
+
+class ServiceViewset(ModelViewSet):
+    queryset = Service.objects.all()
+    serializer_class = ServiceSerializer
+    permission_classes = [IsAdminRole]
 
