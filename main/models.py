@@ -87,6 +87,7 @@ class Service(models.Model):
     name = models.CharField(max_length=100)
     price_per_sqr = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
     price_per_qty = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
+    minimum_price = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
 
     def __str__(self) -> str:
         return self.name

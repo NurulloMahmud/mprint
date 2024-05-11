@@ -218,3 +218,48 @@ class ServiceViewset(ModelViewSet):
     serializer_class = ServiceSerializer
     permission_classes = [IsAdminRole]
 
+
+class CheckServicePrice(APIView):
+    @swagger_auto_schema(
+        operation_description="Get the price for a given service based on kv or quantity",
+        responses={200: 'Price calculation successful', 400: 'Bad Request', 401: 'Unauthorized'}
+    )
+    def get(self, request, service_id: int, kv: str = None, quantity: int = None):
+        if not request.user or not request.user.role.lower() == "admin":
+            context = {
+                "success": False,
+                "message": "User is not authorized"
+            }
+            return Response(context, status=status.HTTP_401_UNAUTHORIZED)
+        try:
+            kv = float(kv)
+        except:
+            context = {
+                "success": False,
+                "message": "Invalid input for kv"
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+        
+        if not quantity and not kv:
+            context = {
+                "success": False,
+                "message": "kv or quantity must be provided"
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+    
+        service = get_object_or_404(Service, id=service_id)
+        if service.price_per_sqr:
+            price = service.price_per_sqr * kv
+        else:
+            price = service.price_per_qty * quantity
+        
+        if price < service.minimum_price:
+            price = service.minimum_price
+
+        context = {
+            "success": True,
+            "data": price
+        }
+
+        return Response(context, status=status.HTTP_200_OK)
+
