@@ -102,11 +102,13 @@ class ServiceOrderSerializer(serializers.ModelSerializer):
 
 class OrderCreateSerializer(serializers.ModelSerializer):
     # Nested serializers to handle related models
-    images = OrderPicsSerializer(many=True)
-    payments = OrderPaymentSerializer(many=True)
-    debt = CustomerDebtSerializer()
+    images = OrderPicsSerializer(many=True, required=False)
+    payments = OrderPaymentSerializer(many=True, required=False)
+    debt = CustomerDebtSerializer(required=False)
     papers = OrderPaperSerializer(many=True)
-    services = ServiceOrderSerializer(many=True)
+    services = ServiceOrderSerializer(many=True, required=False)
+    sqr_meter = serializers.FloatField(write_only=True, required=True)
+    num_lists = serializers.IntegerField(write_only=True, required=True)
 
     class Meta:
         model = Order
@@ -115,11 +117,13 @@ class OrderCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         # Extract related data
-        images_data = validated_data.pop('images')
-        payments_data = validated_data.pop('payments')
-        debt_data = validated_data.pop('debt')
-        papers_data = validated_data.pop('papers')
-        services_data = validated_data.pop('services')
+        images_data = validated_data.pop('images', [])
+        payments_data = validated_data.pop('payments', [])
+        debt_data = validated_data.pop('debt', [])
+        papers_data = validated_data.pop('papers', [])
+        services_data = validated_data.pop('services', [])
+        sqr_meter = validated_data.pop('sqr_meter')
+        num_lists = validated_data.pop('num_lists')
 
         # Create the main Order object
         order = Order.objects.create(**validated_data)
@@ -128,10 +132,13 @@ class OrderCreateSerializer(serializers.ModelSerializer):
         for image in images_data:
             OrderPics.objects.create(order=order, **image)
 
+        paid_amount = 0
         for payment in payments_data:
-            OrderPayment.objects.create(order=order, **payment)
+            payment = OrderPayment.objects.create(order=order, **payment)
+            paid_amount+=payment.amount
 
-        CustomerDebt.objects.create(order=order, **debt_data)
+        if paid_amount < order.final_price:
+            CustomerDebt.objects.create(order=order, customer=order.customer, amount=order.final_price-paid_amount)
 
         for paper in papers_data:
             OrderPaper.objects.create(order=order, **paper)
@@ -170,3 +177,14 @@ class InventoryWriteSerializer(serializers.ModelSerializer):
         model = Inventory
         fields = "__all__"
 
+
+# my custom serializer for order create
+class OrderCreateCustomSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=100)
+    customer = serializers.IntegerField()
+    products_qty = serializers.IntegerField()
+    total_price = serializers.DecimalField(decimal_places=2, max_digits=10)
+    final_price = serializers.DecimalField(decimal_places=2, max_digits=10)
+    price_per_product = serializers.DecimalField(decimal_places=2, max_digits=10)
+    status = serializers.IntegerField()
+    branch = serializers.IntegerField()
