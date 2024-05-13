@@ -25,6 +25,8 @@ from .serializers import (
     InventoryWriteSerializer, ServiceSerializer
 )
 
+from .custom import OrderCreateCustomSerializer
+
 
 from users.permissions import IsAdminRole, IsManagerRole
 
@@ -175,7 +177,7 @@ class OrderListView(generics.ListAPIView):
 
 class OrderCreateView(generics.CreateAPIView):
     queryset = Order.objects.all()
-    serializer_class = OrderCreateSerializer
+    serializer_class = OrderCreateCustomSerializer
 
 
 class PaperTypeViewset(ModelViewSet):

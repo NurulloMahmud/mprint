@@ -6,8 +6,7 @@ from .models import (
     OrderPayment, ServiceOrder,
     Service, Purchase,
     Debt, PaperType,
-    OrderPaper, OrderPics, 
-    Inventory,
+    OrderPics, Inventory,
 )
 
 class PaperTypeSerializer(serializers.ModelSerializer):
@@ -90,11 +89,6 @@ class CustomerDebtSerializer(serializers.ModelSerializer):
         model = CustomerDebt
         fields = ['amount', 'last_update']
 
-class OrderPaperSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = OrderPaper
-        fields = ['paper', 'num_of_lists', 'possible_defect', 'price_per_list', 'price_per_product']
-
 class ServiceOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = ServiceOrder
@@ -105,7 +99,6 @@ class OrderCreateSerializer(serializers.ModelSerializer):
     images = OrderPicsSerializer(many=True, required=False)
     payments = OrderPaymentSerializer(many=True, required=False)
     debt = CustomerDebtSerializer(required=False)
-    papers = OrderPaperSerializer(many=True)
     services = ServiceOrderSerializer(many=True, required=False)
     sqr_meter = serializers.FloatField(write_only=True, required=True)
     num_lists = serializers.IntegerField(write_only=True, required=True)
@@ -139,9 +132,6 @@ class OrderCreateSerializer(serializers.ModelSerializer):
 
         if paid_amount < order.final_price:
             CustomerDebt.objects.create(order=order, customer=order.customer, amount=order.final_price-paid_amount)
-
-        for paper in papers_data:
-            OrderPaper.objects.create(order=order, **paper)
 
         for service in services_data:
             ServiceOrder.objects.create(order=order, **service)

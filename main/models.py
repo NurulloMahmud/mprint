@@ -65,6 +65,10 @@ class Order(models.Model):
     name = models.CharField(max_length=500)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     products_qty = models.IntegerField(null=True, blank=True)
+    paper = models.ForeignKey(Paper, on_delete=models.CASCADE, null=True, blank=True)
+    num_of_lists = models.IntegerField(null=True, blank=True)
+    possible_defect_list = models.IntegerField(null=True, blank=True)
+    price_per_list = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
     total_price = models.DecimalField(decimal_places=2, max_digits=10)
     final_price = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
     price_per_product = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
@@ -93,22 +97,9 @@ class Service(models.Model):
         return self.name
 
 
-class OrderPaper(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    paper = models.ForeignKey(Paper, on_delete=models.CASCADE)
-    num_of_lists = models.IntegerField(null=True, blank=True)
-    possible_defect = models.IntegerField(null=True, blank=True)
-    price_per_list = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
-    price_per_product = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
-
-    def __str__(self) -> str:
-        return self.order.name
-
-
 class ServiceOrder(models.Model):
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField()
     total_price = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
 
     def __str__(self) -> str:
