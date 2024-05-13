@@ -112,7 +112,7 @@ class OrderCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ['date', 'name', 'customer', 'products_qty', 'total_price', 'final_price',
+        fields = ['date', 'name', 'customer', 'products_qty', 'total_price', 'final_price', 'sqr_meter', 'num_lists',
                   'price_per_product', 'status', 'branch', 'images', 'payments', 'debt', 'papers', 'services']
 
     def create(self, validated_data):
