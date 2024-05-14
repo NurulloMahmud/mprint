@@ -67,6 +67,7 @@ class Order(models.Model):
     products_qty = models.IntegerField(null=True, blank=True)
     paper = models.ForeignKey(Paper, on_delete=models.CASCADE, null=True, blank=True)
     num_of_lists = models.IntegerField(null=True, blank=True)
+    sqr_meter = models.FloatField(null=True, blank=True)
     possible_defect_list = models.IntegerField(null=True, blank=True)
     price_per_list = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
     total_price = models.DecimalField(decimal_places=2, max_digits=10)

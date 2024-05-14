@@ -51,7 +51,7 @@ class OrderCreateCustomSerializer(serializers.Serializer):
             customer = customer_obj,
             products_qty = validated_data.get('products_qty'),
             paper = paper_obj,
-            num_lists = total_num_lists,
+            num_of_lists = total_num_lists,
             sqr_meter = sqr_meter,
             total_price = 0,    # calculated later
             final_price = validated_data.get('final_price'),
