@@ -95,3 +95,8 @@ class OrderCreateCustomSerializer(serializers.Serializer):
         paper_obj.save()
 
         return order
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['status'] = instance.status.id  # Ensure the status is represented by its ID
+        return representation
