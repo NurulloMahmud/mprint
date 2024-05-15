@@ -80,12 +80,19 @@ class InventoryWriteSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class OrderPicsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderPics
+        fields = ['pic']
+
+
 class OrderReadSerializer(serializers.ModelSerializer):
     customer = CustomerSerializer()
     paper = PaperReadSerializer()
     status = StatusSerializer()
     branch = BranchSerializer()
+    pics = OrderPicsSerializer(many=True, read_only=True)
+
     class Meta:
         model = Order
         fields = "__all__"
-

@@ -87,7 +87,7 @@ class Order(models.Model):
 
 
 class OrderPics(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="pics")
     pic = models.ImageField()
 
     def __str__(self) -> str:
