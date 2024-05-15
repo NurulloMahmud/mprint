@@ -67,7 +67,7 @@ class Order(models.Model):
     products_qty = models.IntegerField(null=True, blank=True)
     paper = models.ForeignKey(Paper, on_delete=models.CASCADE, null=True, blank=True)
     num_of_lists = models.IntegerField(null=True, blank=True)
-    sqr_meter = models.FloatField(null=True, blank=True)
+    total_sqr_meter = models.FloatField(null=True, blank=True)
     possible_defect_list = models.IntegerField(null=True, blank=True)
     price_per_list = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
     total_price = models.DecimalField(decimal_places=2, max_digits=10)
@@ -108,6 +108,12 @@ class ServiceOrder(models.Model):
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     total_price = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.pk:  # If the order is being created (not updated)
+            if self.total_price < self.service.minimum_price:
+                self.total_price = self.service.minimum_price
+        super().save(*args, **kwargs)
 
     def __str__(self) -> str:
         return self.service.name

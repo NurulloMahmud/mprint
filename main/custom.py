@@ -2,18 +2,18 @@ from rest_framework import serializers
 from .models import Order, OrderPics, ServiceOrder, CustomerDebt, OrderPayment, Customer, Paper, Branch, Service
 
 class OrderCreateCustomSerializer(serializers.Serializer):
-    name = serializers.CharField(max_length=500)
     customer_id = serializers.IntegerField()
-    products_qty = serializers.IntegerField()
     paper_id = serializers.IntegerField()
+    branch = serializers.IntegerField()
+    pics = serializers.ListField(child=serializers.ImageField(), required=False, allow_empty=True)
+    name = serializers.CharField(max_length=500)
+    products_qty = serializers.IntegerField()
     num_of_lists = serializers.IntegerField()
     num_possible_defect_list = serializers.IntegerField(required=False, default=0)
     price_per_list = serializers.DecimalField(decimal_places=2, max_digits=10, required=False)
     total_price = serializers.DecimalField(decimal_places=2, max_digits=10, required=False)
     final_price = serializers.DecimalField(decimal_places=2, max_digits=10, required=False)
     price_per_product = serializers.DecimalField(decimal_places=2, max_digits=10, required=False)
-    branch = serializers.IntegerField()
-    pics = serializers.ListField(child=serializers.ImageField(), required=False, allow_empty=True)
     services = serializers.ListField(child=serializers.IntegerField(), required=False, allow_empty=True)
     total_sqr_meter = serializers.FloatField()
     num_of_lists_per_paper = serializers.IntegerField()
@@ -91,7 +91,5 @@ class OrderCreateCustomSerializer(serializers.Serializer):
 
         return order
 
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        representation['status'] = instance.status.id  # Ensure the status is represented by its ID
-        return representation
+
+
