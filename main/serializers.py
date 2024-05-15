@@ -86,12 +86,19 @@ class OrderPicsSerializer(serializers.ModelSerializer):
         fields = ['pic']
 
 
+class CustomerDebtSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomerDebt
+        fields = "__all__"
+
+
 class OrderReadSerializer(serializers.ModelSerializer):
     customer = CustomerSerializer()
     paper = PaperReadSerializer()
     status = StatusSerializer()
     branch = BranchSerializer()
     pics = OrderPicsSerializer(many=True, read_only=True)
+    debt = CustomerDebtSerializer(read_only=True, many=True)
 
     class Meta:
         model = Order

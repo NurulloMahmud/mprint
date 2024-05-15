@@ -239,9 +239,10 @@ class OrderCreateView(APIView):
                 price_per_product=None,  # to be calculated
                 status=status_obj,
                 branch=branch_obj,
+                num_of_product_per_list=data.get('num_of_product_per_list', 0),
             )
 
-            order.num_of_lists = (order.products_qty // order.num_of_product_per_list) + order.possible_defect_list
+            order.num_of_lists = (int(order.products_qty) // int(order.num_of_product_per_list)) + int(order.possible_defect_list)
 
             # Calculate prices and totals based on related service and paper costs
             total_service_price = 0
@@ -372,7 +373,7 @@ class CheckServicePrice(APIView):
 class OrderReadView(generics.RetrieveAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderReadSerializer
-    permission_classes = [IsManagerRole]
+    # permission_classes = [IsManagerRole]
 
 
 class OrderUpdateView(generics.UpdateAPIView):

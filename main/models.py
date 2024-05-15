@@ -134,7 +134,7 @@ class Purchase(models.Model):
 
 class CustomerDebt(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="debt")
     amount = models.DecimalField(decimal_places=2, max_digits=10)
     last_update = models.DateField(auto_now=True)
 
