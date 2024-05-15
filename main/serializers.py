@@ -46,101 +46,13 @@ class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
         fields = "__all__"
-
-
-class OrderWriteSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Order
-        fields = "__all__"
-
-
-class OrderReadSerializer(serializers.ModelSerializer):
-    customer = CustomerSerializer()
-    status = StatusSerializer()
-    branch = BranchSerializer()
-
-    class Meta:
-        model = Order
-        fields = "__all__"
-        
+   
 
 class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Service
         fields = "__all__"
 
-
-"""
-SERIALIZERS FOR ORDER CREATION
-"""
-
-class OrderPicsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = OrderPics
-        fields = ['pic']
-
-class OrderPaymentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = OrderPayment
-        fields = ['amount', 'date']
-
-class CustomerDebtSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CustomerDebt
-        fields = ['amount', 'last_update']
-
-class ServiceOrderSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ServiceOrder
-        fields = ['service', 'quantity', 'total_price']
-
-class OrderCreateSerializer(serializers.ModelSerializer):
-    # Nested serializers to handle related models
-    images = OrderPicsSerializer(many=True, required=False)
-    payments = OrderPaymentSerializer(many=True, required=False)
-    debt = CustomerDebtSerializer(required=False)
-    services = ServiceOrderSerializer(many=True, required=False)
-    sqr_meter = serializers.FloatField(write_only=True, required=True)
-    num_lists = serializers.IntegerField(write_only=True, required=True)
-
-    class Meta:
-        model = Order
-        fields = ['date', 'name', 'customer', 'products_qty', 'total_price', 'final_price', 'sqr_meter', 'num_lists',
-                  'price_per_product', 'status', 'branch', 'images', 'payments', 'debt', 'papers', 'services']
-
-    def create(self, validated_data):
-        # Extract related data
-        images_data = validated_data.pop('images', [])
-        payments_data = validated_data.pop('payments', [])
-        debt_data = validated_data.pop('debt', [])
-        papers_data = validated_data.pop('papers', [])
-        services_data = validated_data.pop('services', [])
-        sqr_meter = validated_data.pop('sqr_meter')
-        num_lists = validated_data.pop('num_lists')
-
-        # Create the main Order object
-        order = Order.objects.create(**validated_data)
-
-        # Create related objects
-        for image in images_data:
-            OrderPics.objects.create(order=order, **image)
-
-        paid_amount = 0
-        for payment in payments_data:
-            payment = OrderPayment.objects.create(order=order, **payment)
-            paid_amount+=payment.amount
-
-        if paid_amount < order.final_price:
-            CustomerDebt.objects.create(order=order, customer=order.customer, amount=order.final_price-paid_amount)
-
-        for service in services_data:
-            ServiceOrder.objects.create(order=order, **service)
-
-        return order
-
-"""
-END OF ORDER CREATION SERIALIZERS
-"""
 
 class InventoryReadSerializer(serializers.ModelSerializer):
     branch = BranchSerializer(read_only=True)
@@ -168,13 +80,12 @@ class InventoryWriteSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-# my custom serializer for order create
-class OrderCreateCustomSerializer(serializers.Serializer):
-    name = serializers.CharField(max_length=100)
-    customer = serializers.IntegerField()
-    products_qty = serializers.IntegerField()
-    total_price = serializers.DecimalField(decimal_places=2, max_digits=10)
-    final_price = serializers.DecimalField(decimal_places=2, max_digits=10)
-    price_per_product = serializers.DecimalField(decimal_places=2, max_digits=10)
-    status = serializers.IntegerField()
-    branch = serializers.IntegerField()
+class OrderReadSerializer(serializers.ModelSerializer):
+    customer = CustomerSerializer()
+    paper = PaperReadSerializer()
+    status = StatusSerializer()
+    branch = BranchSerializer()
+    class Meta:
+        model = Order
+        fields = "__all__"
+

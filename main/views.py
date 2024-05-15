@@ -20,9 +20,8 @@ from .serializers import (
     BranchSerializer, StatusSerializer, 
     PaperReadSerializer, PaperWriteSerializer,
     CustomerSerializer, OrderReadSerializer,
-    OrderWriteSerializer, OrderCreateSerializer,
     PaperTypeSerializer, InventoryReadSerializer,
-    InventoryWriteSerializer, ServiceSerializer
+    InventoryWriteSerializer, ServiceSerializer,
 )
 
 from .custom import OrderCreateCustomSerializer
@@ -264,4 +263,16 @@ class CheckServicePrice(APIView):
         }
 
         return Response(context, status=status.HTTP_200_OK)
+
+
+class OrderReadView(generics.RetrieveAPIView):
+    queryset = Order.objects.all()
+    serializer_class = OrderReadSerializer
+    permission_classes = [IsManagerRole]
+
+
+class OrderUpdateView(generics.UpdateAPIView):
+    queryset = Order.objects.all()
+    serializer_class = OrderCreateCustomSerializer
+    permission_classes = [IsAdminRole]
 

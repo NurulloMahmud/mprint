@@ -10,7 +10,8 @@ from .views import (
     OrderCreateView, PaperListView,
     PaperTypeViewset, PaperRetrieveUpdateDestroyView,
     InventoryCreateAPIView, InventoryUpdateDestroyAPIView,
-    ServiceViewset, CheckServicePrice
+    ServiceViewset, CheckServicePrice,
+    OrderReadView, OrderUpdateView
 )
 
 router = DefaultRouter()
@@ -27,6 +28,8 @@ urlpatterns = [
     path('paper/<int:pk>/', PaperRetrieveUpdateDestroyView.as_view()),
     path('orders/list/', OrderListView.as_view()),
     path('orders/create/', OrderCreateView.as_view()),
+    path('orders/detail/<int:pk>/', OrderReadView.as_view()),
+    path('orders/update/<int:pk>/', OrderUpdateView.as_view()),
     path('inventory/list/', InventoryListAPIView.as_view()),
     path('inventory/create/', InventoryCreateAPIView.as_view()),
     path('inventory/<int:pk>/', InventoryUpdateDestroyAPIView.as_view()),
