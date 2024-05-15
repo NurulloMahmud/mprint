@@ -259,8 +259,8 @@ class OrderCreateView(APIView):
 
             # Calculate final price
             order.final_price = order.total_price  # Adjust as needed based on additional logic
-            order.price_per_list = order.final_price / order.num_of_lists
-            order.price_per_product = order.final_price / order.products_qty
+            order.price_per_list = order.final_price / int(order.num_of_lists)
+            order.price_per_product = order.final_price / int(order.products_qty)
             order.save()
 
             # Handle Payments and Debts
