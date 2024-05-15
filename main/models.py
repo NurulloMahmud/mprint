@@ -75,6 +75,7 @@ class Order(models.Model):
     price_per_product = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
     status = models.ForeignKey(Status, on_delete=models.CASCADE)
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
+    num_of_product_per_list = models.IntegerField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if not self.pk:  # If the order is being created (not updated)

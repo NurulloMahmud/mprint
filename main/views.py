@@ -182,9 +182,10 @@ class OrderCreateView(APIView):
         operation_description="Creates a new order with all related details including services and images.",
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
-            required=['name', 'customer_id', 'branch', 'paper_id', 'num_of_lists', 'total_sqr_meter', 'final_price', 'num_of_lists_per_paper', 'initial_payment_amount'],
+            required=['name', 'customer_id', 'branch', 'paper_id', 'num_of_lists', 'total_sqr_meter', 'final_price', 'num_of_lists_per_paper', 'initial_payment_amount', 'num_of_product_per_list'],
             properties={
                 'num_of_lists_per_paper': openapi.Schema(type=openapi.TYPE_INTEGER, description='Number of lists per paper'),
+                'num_of_product_per_list': openapi.Schema(type=openapi.TYPE_INTEGER, description='Number of products per list'),
                 'customer_id': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID of the customer'),
                 'final_price': openapi.Schema(type=openapi.FORMAT_DECIMAL, description='Final price of the order'),
                 'branch': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID of the branch'),
@@ -239,6 +240,8 @@ class OrderCreateView(APIView):
                 status=status_obj,
                 branch=branch_obj,
             )
+
+            order.num_of_lists = (order.products_qty // order.num_of_product_per_list) + order.possible_defect_list
 
             # Calculate prices and totals based on related service and paper costs
             total_service_price = 0
