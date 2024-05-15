@@ -76,7 +76,13 @@ class Order(models.Model):
     status = models.ForeignKey(Status, on_delete=models.CASCADE)
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
 
-    def __str__(self) -> str:
+    def save(self, *args, **kwargs):
+        if not self.pk:  # If the order is being created (not updated)
+            pending_status = Status.objects.get(name="Pending")
+            self.status = pending_status
+        super().save(*args, **kwargs)
+
+    def __str__(self):
         return self.name
 
 

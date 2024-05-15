@@ -1,7 +1,5 @@
 from rest_framework import serializers
-from .models import Order, OrderPics, ServiceOrder, CustomerDebt, OrderPayment, Customer, Paper, Status, Branch, Service
-
-
+from .models import Order, OrderPics, ServiceOrder, CustomerDebt, OrderPayment, Customer, Paper, Branch, Service
 
 class OrderCreateCustomSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=500)
@@ -14,7 +12,6 @@ class OrderCreateCustomSerializer(serializers.Serializer):
     total_price = serializers.DecimalField(decimal_places=2, max_digits=10, required=False)
     final_price = serializers.DecimalField(decimal_places=2, max_digits=10, required=False)
     price_per_product = serializers.DecimalField(decimal_places=2, max_digits=10, required=False)
-    status = serializers.IntegerField()
     branch = serializers.IntegerField()
     pics = serializers.ListField(child=serializers.ImageField(), required=False, allow_empty=True)
     services = serializers.ListField(child=serializers.IntegerField(), required=False, allow_empty=True)
@@ -26,9 +23,8 @@ class OrderCreateCustomSerializer(serializers.Serializer):
         try:
             customer_obj = Customer.objects.get(id=validated_data['customer_id'])
             paper_obj = Paper.objects.get(id=validated_data['paper_id'])
-            status_obj = Status.objects.get(id=validated_data['status'])
             branch_obj = Branch.objects.get(id=validated_data['branch'])
-        except (Customer.DoesNotExist, Paper.DoesNotExist, Status.DoesNotExist, Branch.DoesNotExist) as e:
+        except (Customer.DoesNotExist, Paper.DoesNotExist, Branch.DoesNotExist) as e:
             raise serializers.ValidationError(f"Related object not found: {str(e)}")
 
         total_num_lists = validated_data['num_of_lists'] + validated_data.get('num_possible_defect_list', 0)
@@ -45,7 +41,6 @@ class OrderCreateCustomSerializer(serializers.Serializer):
             total_price=0,    # calculated later
             final_price=validated_data.get('final_price'),
             price_per_product=0,   # calculated later
-            status=status_obj,
             branch=branch_obj
         )
 
