@@ -268,10 +268,12 @@ class OrderCreateView(APIView):
             order.save()
 
             # Handle Payments and Debts
-            if float(data.get('initial_payment_amount', 0)) < order.final_price:
-                CustomerDebt.objects.create(customer=customer_obj, order=order, amount=order.final_price - float(data['initial_payment_amount']))
-            if float(data.get('initial_payment_amount', 0)) > 0:
-                OrderPayment.objects.create(order=order, amount=float(data['initial_payment_amount']))
+            initial_payment_amount = float(data.get('initial_payment_amount', 0))
+            final_price = float(order.final_price)
+            if initial_payment_amount < final_price:
+                CustomerDebt.objects.create(customer=customer_obj, order=order, amount=final_price - initial_payment_amount)
+            if initial_payment_amount > 0:
+                OrderPayment.objects.create(order=order, amount=initial_payment_amount)
 
             # Handle image uploads
             for image_file in request.FILES.getlist('pics'):

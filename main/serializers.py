@@ -92,13 +92,20 @@ class CustomerDebtSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class OrderPaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderPayment
+        fields = "__all__"
+
+
 class OrderReadSerializer(serializers.ModelSerializer):
     customer = CustomerSerializer()
     paper = PaperReadSerializer()
     status = StatusSerializer()
     branch = BranchSerializer()
     pics = OrderPicsSerializer(many=True, read_only=True)
-    debt = CustomerDebtSerializer(read_only=True, many=True)
+    debt = CustomerDebtSerializer(many=True, read_only=True)
+    payments = OrderPaymentSerializer(many=True, read_only=True)
 
     class Meta:
         model = Order
