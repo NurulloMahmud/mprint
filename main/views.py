@@ -4,6 +4,8 @@ from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework import status
 
+from decimal import Decimal
+
 from django.shortcuts import get_object_or_404
 
 from drf_yasg.utils import swagger_auto_schema
@@ -340,7 +342,7 @@ class CheckServicePrice(APIView):
             }
             return Response(context, status=status.HTTP_401_UNAUTHORIZED)
         try:
-            kv = float(kv)
+            kv = Decimal(kv)
         except:
             context = {
                 "success": False,
