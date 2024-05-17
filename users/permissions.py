@@ -33,3 +33,18 @@ class IsManagerRole(RoleBasedPermission):
     Custom permission to only allow users with the "manager" role to access the view.
     """
     required_roles = ['manager', 'admin']
+
+
+class IsFactoryRole(RoleBasedPermission):
+    """
+    Custom permission to only allow users with the "manager" role to access the view.
+    """
+    required_roles = ['manager', 'admin', 'factory']
+
+
+class IsPrinterRole(RoleBasedPermission):
+    """
+    Custom permission to only allow users with the "manager" role to access the view.
+    """
+    required_roles = ['manager', 'admin', 'printer']
+

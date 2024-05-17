@@ -30,6 +30,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('users/', include('users.urls')),
     path('main/', include('main.urls')),
+    path('manufacture/', include('manufacture.urls')),
 
     # swagger
     path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
