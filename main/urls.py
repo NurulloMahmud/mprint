@@ -11,7 +11,7 @@ from .views import (
     PaperTypeViewset, PaperRetrieveUpdateDestroyView,
     InventoryCreateAPIView, InventoryUpdateDestroyAPIView,
     ServiceViewset, CheckServicePrice,
-    OrderReadView, OrderUpdateView
+    OrderReadView, OrderUpdateView, PaperByType
 )
 
 router = DefaultRouter()
@@ -24,6 +24,7 @@ router.register(r'service', ServiceViewset, basename='service')
 
 urlpatterns = [
     path('paper/', PaperCreateView.as_view()),
+    path('paper/list/<int:paper_type_id>/', PaperByType.as_view()),
     path('paper/list/', PaperListView.as_view()),
     path('paper/<int:pk>/', PaperRetrieveUpdateDestroyView.as_view()),
     path('orders/list/', OrderListView.as_view()),

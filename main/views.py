@@ -385,3 +385,10 @@ class OrderUpdateView(generics.UpdateAPIView):
     serializer_class = OrderCreateCustomSerializer
     permission_classes = [IsAdminRole]
 
+
+class PaperByType(APIView):
+    def get(self, request, paper_type_id: int):
+        paper_type = get_object_or_404(PaperType, id=paper_type_id)
+        papers = Paper.objects.filter(paper_type=paper_type)
+        serializer = PaperReadSerializer(papers, many=True)
+        return Response(serializer.data)
