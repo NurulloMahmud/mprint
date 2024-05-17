@@ -237,7 +237,7 @@ class OrderCreateView(APIView):
                 possible_defect_list=data.get('num_possible_defect_list', 0),
                 price_per_list=None,  # to be calculated
                 total_price=0,  # to be calculated
-                final_price=data['final_price'],
+                final_price=Decimal(data['final_price']),
                 price_per_product=None,  # to be calculated
                 status=status_obj,
                 branch=branch_obj,
@@ -264,14 +264,14 @@ class OrderCreateView(APIView):
             order.total_price = total_service_price + paper_cost
 
             # Calculate final price
-            order.final_price = order.total_price  # Adjust as needed based on additional logic
+            # order.final_price = order.total_price  # Adjust as needed based on additional logic
             order.price_per_list = order.final_price / int(order.num_of_lists)
             order.price_per_product = order.final_price / int(order.products_qty)
             order.save()
 
             # Handle Payments and Debts
-            initial_payment_amount = float(data.get('initial_payment_amount', 0))
-            final_price = float(order.final_price)
+            initial_payment_amount = Decimal(data.get('initial_payment_amount', 0))
+            final_price = Decimal(order.final_price)
             if initial_payment_amount < final_price:
                 CustomerDebt.objects.create(customer=customer_obj, order=order, amount=final_price - initial_payment_amount)
             if initial_payment_amount > 0:

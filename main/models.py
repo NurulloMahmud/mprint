@@ -41,8 +41,8 @@ class Paper(models.Model):
     name = models.CharField(max_length=100)
     paper_type = models.ForeignKey(PaperType, on_delete=models.CASCADE, null=True, blank=True)
     grammaj = models.CharField(max_length=250, null=True, blank=True)
-    cost = models.DecimalField(decimal_places=2, max_digits=10)
-    price = models.DecimalField(decimal_places=2, max_digits=10)
+    cost = models.DecimalField(decimal_places=2, max_digits=40)
+    price = models.DecimalField(decimal_places=2, max_digits=40)
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE, null=True, blank=True)
     available_qty = models.IntegerField(null=True, blank=True)
 
@@ -69,10 +69,10 @@ class Order(models.Model):
     num_of_lists = models.IntegerField(null=True, blank=True)
     total_sqr_meter = models.FloatField(null=True, blank=True)
     possible_defect_list = models.IntegerField(null=True, blank=True)
-    price_per_list = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
-    total_price = models.DecimalField(decimal_places=2, max_digits=10)
-    final_price = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
-    price_per_product = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
+    price_per_list = models.DecimalField(decimal_places=2, max_digits=40, null=True, blank=True)
+    total_price = models.DecimalField(decimal_places=2, max_digits=40)
+    final_price = models.DecimalField(decimal_places=2, max_digits=40, null=True, blank=True)
+    price_per_product = models.DecimalField(decimal_places=2, max_digits=40, null=True, blank=True)
     status = models.ForeignKey(Status, on_delete=models.CASCADE)
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
     num_of_product_per_list = models.IntegerField(null=True, blank=True)
@@ -97,9 +97,9 @@ class OrderPics(models.Model):
 
 class Service(models.Model):
     name = models.CharField(max_length=100)
-    price_per_sqr = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
-    price_per_qty = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
-    minimum_price = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
+    price_per_sqr = models.DecimalField(decimal_places=2, max_digits=40, null=True, blank=True)
+    price_per_qty = models.DecimalField(decimal_places=2, max_digits=40, null=True, blank=True)
+    minimum_price = models.DecimalField(decimal_places=2, max_digits=40, null=True, blank=True)
 
     def __str__(self) -> str:
         return self.name
@@ -108,7 +108,7 @@ class Service(models.Model):
 class ServiceOrder(models.Model):
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    total_price = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
+    total_price = models.DecimalField(decimal_places=2, max_digits=40, null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if not self.pk:  # If the order is being created (not updated)
@@ -123,9 +123,9 @@ class ServiceOrder(models.Model):
 class Purchase(models.Model):
     date = models.DateField(auto_now_add=True)
     item = models.CharField(max_length=200)
-    unit_price = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
+    unit_price = models.DecimalField(decimal_places=2, max_digits=40, null=True, blank=True)
     quantity = models.PositiveIntegerField(null=True, blank=True)
-    total_price = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
+    total_price = models.DecimalField(decimal_places=2, max_digits=40, null=True, blank=True)
     status = models.ForeignKey(Status, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
@@ -135,7 +135,7 @@ class Purchase(models.Model):
 class CustomerDebt(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="debt")
-    amount = models.DecimalField(decimal_places=2, max_digits=10)
+    amount = models.DecimalField(decimal_places=2, max_digits=40)
     last_update = models.DateField(auto_now=True)
 
     def __str__(self) -> str:
@@ -144,7 +144,7 @@ class CustomerDebt(models.Model):
 
 class OrderPayment(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="payments")
-    amount = models.DecimalField(decimal_places=2, max_digits=10)
+    amount = models.DecimalField(decimal_places=2, max_digits=40)
     date = models.DateField(auto_now_add=True)
 
     def __str__(self) -> str:
@@ -153,7 +153,7 @@ class OrderPayment(models.Model):
 
 class Debt(models.Model):
     purchase = models.ForeignKey(Purchase, on_delete=models.CASCADE)
-    amount = models.DecimalField(decimal_places=2, max_digits=10)
+    amount = models.DecimalField(decimal_places=2, max_digits=40)
 
     def __str__(self) -> str:
         return self.purchase.item
@@ -161,8 +161,8 @@ class Debt(models.Model):
 
 class Inventory(models.Model):
     name = models.CharField(max_length=100)
-    cost = models.DecimalField(decimal_places=2, max_digits=10)
-    price = models.DecimalField(decimal_places=2, max_digits=10)
+    cost = models.DecimalField(decimal_places=2, max_digits=40)
+    price = models.DecimalField(decimal_places=2, max_digits=40)
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
     available = models.IntegerField(default=0)
 
