@@ -184,9 +184,13 @@ class OrderCreateView(APIView):
         operation_description="Creates a new order with all related details including services and images.",
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
-            required=['name', 'customer_id', 'branch', 'paper_id', 'num_of_lists', 'total_sqr_meter', 'final_price', 'num_of_lists_per_paper', 'initial_payment_amount', 'num_of_product_per_list'],
+            required=['name', 'customer_id', 'branch', 'paper_id', 
+                      'num_of_lists', 'total_sqr_meter', 'final_price', 
+                      'num_of_lists_per_paper', 'initial_payment_amount', 
+                      'num_of_product_per_list', 'lists_per_paper'],
             properties={
                 'num_of_lists_per_paper': openapi.Schema(type=openapi.TYPE_INTEGER, description='Number of lists per paper'),
+                'lists_per_paper': openapi.Schema(type=openapi.TYPE_INTEGER, description='How many lists per paper'),
                 'num_of_product_per_list': openapi.Schema(type=openapi.TYPE_INTEGER, description='Number of products per list'),
                 'customer_id': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID of the customer'),
                 'final_price': openapi.Schema(type=openapi.FORMAT_DECIMAL, description='Final price of the order'),
@@ -241,33 +245,19 @@ class OrderCreateView(APIView):
                 price_per_product=None,  # to be calculated
                 status=status_obj,
                 branch=branch_obj,
-                num_of_product_per_list=data.get('num_of_product_per_list', 0),
+                num_of_product_per_list=data['num_of_product_per_list'],
+                lists_per_paper=data['num_of_lists_per_paper']
             )
 
             order.num_of_lists = (int(order.products_qty) // int(order.num_of_product_per_list)) + int(order.possible_defect_list)
 
             # Calculate prices and totals based on related service and paper costs
-            total_service_price = 0
             for service_id in data.get('services', []):
                 service_obj = get_object_or_404(Service, id=service_id)
-                service_order = ServiceOrder(
-                    service=service_obj,
-                    order=order,
-                    total_price=service_obj.minimum_price if service_obj.minimum_price else 0  # default to zero if not set
-                )
-                service_order.save()  # This will adjust price if below minimum in ServiceOrder save()
-                total_service_price += service_order.total_price
+                ServiceOrder.objects.create(service=service_obj, order=order)
 
-            # Calculate paper price (simplified example, add error checking as necessary)
-            num_of_papers = int(order.num_of_lists) // int(data['num_of_lists_per_paper'])
-            paper_cost = paper_obj.price * num_of_papers if paper_obj.price else 0
-            order.total_price = total_service_price + paper_cost
-
-            # Calculate final price
-            # order.final_price = order.total_price  # Adjust as needed based on additional logic
-            order.price_per_list = order.final_price / int(order.num_of_lists)
-            order.price_per_product = order.final_price / int(order.products_qty)
-            order.save()
+            # Calculate total price of order
+            order.calculate()
 
             # Handle Payments and Debts
             initial_payment_amount = Decimal(data.get('initial_payment_amount', 0))

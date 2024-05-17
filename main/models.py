@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-
+from decimal import Decimal
 
 class Branch(models.Model):
     name = models.CharField(max_length=100)
@@ -76,12 +76,29 @@ class Order(models.Model):
     status = models.ForeignKey(Status, on_delete=models.CASCADE)
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
     num_of_product_per_list = models.IntegerField(null=True, blank=True)
+    lists_per_paper = models.IntegerField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if not self.pk:  # If the order is being created (not updated)
             pending_status = Status.objects.get(name="Pending")
             self.status = pending_status
         super().save(*args, **kwargs)
+    
+    def calculate(self):
+        total_service_price = 0
+        if self.lists_per_paper and self.paper and self.paper.price:
+            total_paper_price = (((self.num_of_lists or 0) + (self.possible_defect_list or 0)) / self.lists_per_paper) * Decimal(self.paper.price)
+        else:
+            total_paper_price = Decimal(0)
+
+        services = ServiceOrder.objects.filter(order=self)
+        for service in services:
+            total_service_price += service.total_price
+
+        self.total_price = total_service_price + total_paper_price
+        self.price_per_list = self.final_price / (self.num_of_lists + self.possible_defect_list)
+        self.price_per_product = self.final_price / self.products_qty
+        self.save()
 
     def __str__(self):
         return self.name
@@ -112,8 +129,14 @@ class ServiceOrder(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.pk:  # If the order is being created (not updated)
+            if self.service.price_per_sqr is not None:
+                self.total_price = self.order.total_sqr_meter * self.service.price_per_sqr
+            else:
+                self.total_price = self.order.num_of_lists * self.service.price_per_qty
+            
             if self.total_price < self.service.minimum_price:
                 self.total_price = self.service.minimum_price
+
         super().save(*args, **kwargs)
 
     def __str__(self) -> str:
