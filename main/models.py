@@ -84,21 +84,29 @@ class Order(models.Model):
             self.status = pending_status
         super().save(*args, **kwargs)
     
-    def calculate(self):
-        total_service_price = 0
+    def calculate(self, service_ids):
+        total_service_price = Decimal(0)
+        
+        # Calculate paper price
         if self.lists_per_paper and self.paper and self.paper.price:
             total_paper_price = (((self.num_of_lists or 0) + (self.possible_defect_list or 0)) / self.lists_per_paper) * Decimal(self.paper.price)
         else:
             total_paper_price = Decimal(0)
-
-        services = ServiceOrder.objects.filter(order=self)
-        for service in services:
-            total_service_price += service.total_price
-
+        
+        # Create ServiceOrder instances and calculate total service price
+        for service_id in service_ids:
+            service_obj = Service.objects.get(id=service_id)
+            service_order = ServiceOrder.objects.create(
+                service=service_obj,
+                order=self,
+            )
+            total_service_price += service_order.total_price
+        
         self.total_price = total_service_price + total_paper_price
-        self.price_per_list = self.final_price / (self.num_of_lists + self.possible_defect_list)
-        self.price_per_product = self.final_price / self.products_qty
+        self.price_per_list = self.final_price / int(self.num_of_lists) if self.num_of_lists else Decimal(0)
+        self.price_per_product = self.final_price / int(self.products_qty) if self.products_qty else Decimal(0)
         self.save()
+
 
     def __str__(self):
         return self.name

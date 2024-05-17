@@ -251,11 +251,6 @@ class OrderCreateView(APIView):
 
             order.num_of_lists = (int(order.products_qty) // int(order.num_of_product_per_list)) + int(order.possible_defect_list)
 
-            # Calculate prices and totals based on related service and paper costs
-            for service_id in data.get('services', []):
-                service_obj = get_object_or_404(Service, id=service_id)
-                ServiceOrder.objects.create(service=service_obj, order=order)
-
             # Calculate total price of order
             order.calculate()
 
