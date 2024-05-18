@@ -49,6 +49,8 @@ class OrderStatusChange(generics.UpdateAPIView):
     serializer_class = OrderUpdateSerializer
     permission_classes = [IsManagerRole]
 
+    def get_serializer_context(self):
+        return {"request": self.request}
 
 class OrderListByStatusAPIView(generics.ListAPIView):
     serializer_class = OrderReadSerializer
