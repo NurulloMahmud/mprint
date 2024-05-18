@@ -110,3 +110,17 @@ class OrderReadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = "__all__"
+
+
+class OrderDeleteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = ['id']
+    
+    def delete(self, instance):
+        if instance.status.name != 'Pending':
+            raise serializers.ValidationError('Order cannot be deleted')
+        else:
+            instance.delete()
+            return instance
+

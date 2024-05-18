@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from decimal import Decimal
+from django.core.exceptions import ValidationError
+
 
 class Branch(models.Model):
     name = models.CharField(max_length=100)
@@ -83,6 +85,14 @@ class Order(models.Model):
             pending_status = Status.objects.get(name="Pending")
             self.status = pending_status
         super().save(*args, **kwargs)
+    
+    def delete(self, *args, **kwargs):
+        if self.status.name != 'Pending':
+            raise ValidationError('Order cannot be deleted')
+        else:
+            self.paper.available_qty += (self.num_of_lists + self.possible_defect_list) // self.lists_per_paper
+            self.paper.save()
+            super().delete(*args, **kwargs)
     
     def calculate(self, service_ids):
         total_service_price = Decimal(0)

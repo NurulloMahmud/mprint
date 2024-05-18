@@ -107,7 +107,6 @@ class PaperCreateView(APIView):
         return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
 
-#
 class PaperDetailUpdateDestroyView(APIView):
     def get(self, request, id: int):
         paper = get_object_or_404(Paper, id=id)
@@ -273,7 +272,6 @@ class OrderCreateView(APIView):
         
         except Exception as e:
             return Response({"success": False, "message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
 
 
 class PaperTypeViewset(ModelViewSet):
