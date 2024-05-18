@@ -154,7 +154,7 @@ class ServiceOrder(models.Model):
     def save(self, *args, **kwargs):
         if not self.pk:  # If the order is being created (not updated)
             if self.service.price_per_sqr is not None:
-                self.total_price = self.order.total_sqr_meter * self.service.price_per_sqr
+                self.total_price = Decimal(self.order.total_sqr_meter) * Decimal(self.service.price_per_sqr)
             else:
                 self.total_price = self.order.num_of_lists * self.service.price_per_qty
             
