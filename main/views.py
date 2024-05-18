@@ -26,6 +26,7 @@ from .serializers import (
     CustomerSerializer, OrderReadSerializer,
     PaperTypeSerializer, InventoryReadSerializer,
     InventoryWriteSerializer, ServiceSerializer,
+    OrderDeleteSerializer,
 )
 
 from .custom import OrderCreateCustomSerializer
@@ -369,6 +370,12 @@ class OrderReadView(generics.RetrieveAPIView):
 class OrderUpdateView(generics.UpdateAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderCreateCustomSerializer
+    permission_classes = [IsAdminRole]
+
+
+class OrderDestroyView(generics.DestroyAPIView):
+    queryset = Order.objects.all()
+    serializer_class = OrderDeleteSerializer
     permission_classes = [IsAdminRole]
 
 
