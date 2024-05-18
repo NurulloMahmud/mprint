@@ -90,7 +90,7 @@ class Order(models.Model):
         if self.status.name != 'Pending':
             raise ValidationError('Order cannot be deleted')
         else:
-            self.paper.available_qty += (self.num_of_lists + self.possible_defect_list) // self.lists_per_paper
+            self.paper.available_qty += (int(self.num_of_lists) + int(self.possible_defect_list)) // int(self.lists_per_paper)
             self.paper.save()
             super().delete(*args, **kwargs)
     
@@ -99,7 +99,12 @@ class Order(models.Model):
         
         # Calculate paper price
         if self.lists_per_paper and self.paper and self.paper.price:
-            total_paper_price = (((self.num_of_lists or 0) + (self.possible_defect_list or 0)) / self.lists_per_paper) * Decimal(self.paper.price)
+            num_of_lists = Decimal(int(self.num_of_lists or 0))
+            possible_defect_list = Decimal(int(self.possible_defect_list or 0))
+            lists_per_paper = Decimal(int(self.lists_per_paper))
+            paper_price = Decimal(self.paper.price)
+            # Perform the calculation
+            total_paper_price = ((num_of_lists + possible_defect_list) / lists_per_paper) * paper_price
         else:
             total_paper_price = Decimal(0)
         
