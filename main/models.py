@@ -103,8 +103,9 @@ class Order(models.Model):
             possible_defect_list = Decimal(int(self.possible_defect_list or 0))
             lists_per_paper = Decimal(int(self.lists_per_paper))
             paper_price = Decimal(self.paper.price)
+            num_of_papers = ((num_of_lists + possible_defect_list) / lists_per_paper)
             # Perform the calculation
-            total_paper_price = ((num_of_lists + possible_defect_list) / lists_per_paper) * paper_price
+            total_paper_price = Decimal(num_of_papers) * Decimal(paper_price)
         else:
             total_paper_price = Decimal(0)
         
