@@ -148,7 +148,7 @@ class Service(models.Model):
 
 class ServiceOrder(models.Model):
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='services')
     total_price = models.DecimalField(decimal_places=2, max_digits=40, null=True, blank=True)
 
     def save(self, *args, **kwargs):

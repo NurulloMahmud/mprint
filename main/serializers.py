@@ -98,6 +98,13 @@ class OrderPaymentSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class ServiceOrderSerializer(serializers.ModelSerializer):
+    service = ServiceSerializer()
+    class Meta:
+        model = ServiceOrder
+        fields = ['service', 'total_price']
+
+
 class OrderReadSerializer(serializers.ModelSerializer):
     customer = CustomerSerializer()
     paper = PaperReadSerializer()
@@ -106,6 +113,7 @@ class OrderReadSerializer(serializers.ModelSerializer):
     pics = OrderPicsSerializer(many=True, read_only=True)
     debt = CustomerDebtSerializer(many=True, read_only=True)
     payments = OrderPaymentSerializer(many=True, read_only=True)
+    services = ServiceOrderSerializer(many=True, read_only=True)
 
     class Meta:
         model = Order
