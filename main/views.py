@@ -222,7 +222,7 @@ class OrderCreateView(APIView):
         # Validate and fetch related objects
         try:
             customer_obj = get_object_or_404(Customer, id=data['customer_id'])
-            branch_obj = get_object_or_404(Branch, id=data['branch'])
+            branch_obj = request.user.branch
             paper_obj = get_object_or_404(Paper, id=data['paper_id'])
             # Ensure the default status is set if the order is new
             status_obj = Status.objects.get(name="Pending")
