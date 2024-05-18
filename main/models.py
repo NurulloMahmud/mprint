@@ -90,7 +90,10 @@ class Order(models.Model):
         if self.status.name != 'Pending':
             raise ValidationError('Order cannot be deleted')
         else:
-            self.paper.available_qty += (int(self.num_of_lists) + int(self.possible_defect_list)) // int(self.lists_per_paper)
+            num_of_lists = int(self.num_of_lists or 0)
+            possible_defect_list = int(self.possible_defect_list or 0)
+            lists_per_paper = int(self.lists_per_paper or 0)
+            self.paper.available_qty += (num_of_lists + possible_defect_list) // lists_per_paper
             self.paper.save()
             super().delete(*args, **kwargs)
     
