@@ -60,6 +60,8 @@ class PaperRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class PaperCreateView(APIView):
+    permission_classes = [IsAdminRole]
+
     @swagger_auto_schema(
         operation_description="Create a new paper entry.",
         request_body=openapi.Schema(
@@ -106,66 +108,6 @@ class PaperCreateView(APIView):
             "message": "Invalid data input or missing field",
         }
         return Response(context, status=status.HTTP_400_BAD_REQUEST)
-
-
-class PaperDetailUpdateDestroyView(APIView):
-    def get(self, request, id: int):
-        paper = get_object_or_404(Paper, id=id)
-        serializer = PaperReadSerializer(paper)
-
-        context = {
-            "success": True,
-            "data": serializer.data,
-        }
-
-        return Response(context, status=status.HTTP_200_OK)
-
-    def put(self, request, id: int):
-
-        if not request.user or request.user.role.lower() == "admin":
-            context = {
-                "success": False,
-                "message": "user is not authorized"
-            }
-            return Response(context, status=status.HTTP_401_UNAUTHORIZED)
-        
-        paper = get_object_or_404(Paper, id=id)
-        serializer = PaperWriteSerializer(paper, data=request.data)
-
-        if serializer.is_valid():
-            serializer.save()
-            context = {
-                "success": True,
-                "message": "updated the object successfully",
-                "data": serializer.data
-            }
-
-            return Response(context, status=status.HTTP_200_OK)
-        context = {
-            "success": False,
-            "message": "invalid data input"
-        }
-
-        return Response(context, status=status.HTTP_400_BAD_REQUEST)
-    
-    def delete(self, request, id: int):
-
-        if not request.user or request.user.role.lower() == "admin":
-            context = {
-                "success": False,
-                "message": "user is not authorized"
-            }
-            return Response(context, status=status.HTTP_401_UNAUTHORIZED)
-        
-        paper = get_object_or_404(Paper, id=id)
-        paper.delete()
-
-        context = {
-            "success": True,
-            "message": "data has been deleted successfully"
-        }
-
-        return Response(context, status=status.HTTP_204_NO_CONTENT)
 
 
 class CustomerViewset(ModelViewSet):

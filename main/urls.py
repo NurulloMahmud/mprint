@@ -5,9 +5,8 @@ from rest_framework.routers import DefaultRouter
 
 from .views import (
     StatusViewSet, BranchViewset,
-    PaperDetailUpdateDestroyView, PaperCreateView,
-    CustomerViewset, OrderListView, InventoryListAPIView,
-    OrderCreateView, PaperListView,
+    PaperCreateView, CustomerViewset, OrderListView, 
+    InventoryListAPIView, OrderCreateView, PaperListView,
     PaperTypeViewset, PaperRetrieveUpdateDestroyView,
     InventoryCreateAPIView, InventoryUpdateDestroyAPIView,
     ServiceViewset, CheckServicePrice, OrderDestroyView,
