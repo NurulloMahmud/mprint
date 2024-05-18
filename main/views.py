@@ -197,7 +197,8 @@ class OrderCreateView(APIView):
             order.num_of_lists = (int(order.products_qty) // int(order.num_of_product_per_list)) + int(order.possible_defect_list)
 
             # Calculate total price of order
-            order.calculate()
+            service_ids = request.data.get('services', [])
+            order.calculate(service_ids)
 
             # Handle Payments and Debts
             initial_payment_amount = Decimal(data.get('initial_payment_amount', 0))
