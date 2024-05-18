@@ -26,7 +26,7 @@ from .serializers import (
     CustomerSerializer, OrderReadSerializer,
     PaperTypeSerializer, InventoryReadSerializer,
     InventoryWriteSerializer, ServiceSerializer,
-    OrderDeleteSerializer,
+    OrderDeleteSerializer, InventorySerializer
 )
 
 from .custom import OrderCreateCustomSerializer
@@ -327,3 +327,10 @@ class PaperByType(APIView):
         papers = Paper.objects.filter(paper_type=paper_type)
         serializer = PaperReadSerializer(papers, many=True)
         return Response(serializer.data)
+
+
+class InventoryModelViewset(ModelViewSet):
+    queryset = Inventory.objects.all()
+    serializer_class = InventorySerializer
+    permission_classes = [IsAdminRole]
+
