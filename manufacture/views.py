@@ -63,8 +63,10 @@ class OrderListByStatusAPIView(generics.ListAPIView):
         return Order.objects.filter(status__id=status)
 
 
-class OrderListByUser(APIView):
+class OrderListByUser(generics.ListAPIView):
+    serializer_class = OrderReadSerializer
     permission_classes = [IsAuthenticated]
+    pagination_class = CustomPagination
 
     @swagger_auto_schema(
         operation_description="Retrieve a list of orders for the authenticated user based on role and branch",
@@ -78,22 +80,14 @@ class OrderListByUser(APIView):
             )
         ]
     )
-    def get(self, request):
+    def get_queryset(self):
         """
         Retrieves a list of orders. Admin users get all orders,
         while other users get orders filtered by their branch and role.
         """
-        user = request.user
+        user = self.request.user
         if user.role.lower() == "admin":
-            orders = Order.objects.all().order_by('-date')
+            return Order.objects.all().order_by('-date')
         else:
-            orders = Order.objects.filter(branch=user.branch, status__name=user.role).order_by('-date')
-        
-        paginator = CustomPagination()
-        page = paginator.paginate_queryset(orders, request)
-        if page is not None:
-            serializer = OrderReadSerializer(page, many=True)
-            return paginator.get_paginated_response(serializer.data)
+            return Order.objects.filter(branch=user.branch, status__name=user.role).order_by('-date')
 
-        serializer = OrderReadSerializer(orders, many=True)
-        return Response(serializer.data)
