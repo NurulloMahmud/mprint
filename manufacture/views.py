@@ -55,7 +55,7 @@ class OrderStatusChange(generics.UpdateAPIView):
 
 class OrderListByStatusAPIView(generics.ListAPIView):
     serializer_class = OrderReadSerializer
-    permission_classes = [IsManagerRole]
+    # permission_classes = [IsManagerRole]
 
     def get_queryset(self):
         status = self.kwargs['status']
@@ -64,7 +64,24 @@ class OrderListByStatusAPIView(generics.ListAPIView):
 
 class OrderListByUser(APIView):
     permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        operation_description="Retrieve a list of orders for the authenticated user based on role and branch",
+        responses={200: OrderReadSerializer(many=True)},
+        manual_parameters=[
+            openapi.Parameter(
+                'Authorization', 
+                openapi.IN_HEADER,
+                description="Bearer Token",
+                type=openapi.TYPE_STRING
+            )
+        ]
+    )
     def get(self, request):
+        """
+        Retrieves a list of orders. Admin users get all orders,
+        while other users get orders filtered by their branch and role.
+        """
         user = request.user
         if user.role.lower() == "admin":
             orders = Order.objects.all().order_by('-date')
