@@ -31,6 +31,7 @@ urlpatterns = [
     path('users/', include('users.urls')),
     path('main/', include('main.urls')),
     path('manufacture/', include('manufacture.urls')),
+    path('accounting/', include('accounting.urls')),
 
     # swagger
     path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),

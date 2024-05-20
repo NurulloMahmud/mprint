@@ -4,8 +4,7 @@ from .models import (
     Paper, Customer,
     CustomerDebt, Order,
     OrderPayment, ServiceOrder,
-    Service, Purchase,
-    Debt, PaperType,
+    Service, PaperType,
     OrderPics, Inventory,
 )
 

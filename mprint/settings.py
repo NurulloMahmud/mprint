@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'users',
     'main',
     'manufacture',
+    'accounting',
 
     # 3rd party
     'rest_framework',

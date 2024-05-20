@@ -52,6 +52,7 @@ class OrderStatusChange(generics.UpdateAPIView):
     def get_serializer_context(self):
         return {"request": self.request}
 
+
 class OrderListByStatusAPIView(generics.ListAPIView):
     serializer_class = OrderReadSerializer
     permission_classes = [IsManagerRole]
@@ -60,3 +61,15 @@ class OrderListByStatusAPIView(generics.ListAPIView):
         status = self.kwargs['status']
         return Order.objects.filter(status__name=status)
 
+
+class OrderListByUser(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        user = self.request.user
+        if user.role.lower() == "admin":
+            orders = Order.objects.all().order_by('-date')
+        else:
+            orders = Order.objects.filter(branch=user.branch, status__name=user.role).order_by('-date')
+
+        serializer = OrderReadSerializer(orders, many=True)
+        return Response(serializer.data)

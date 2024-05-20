@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from decimal import Decimal
 from django.core.exceptions import ValidationError
+import math
 
 
 class Branch(models.Model):
@@ -107,6 +108,7 @@ class Order(models.Model):
             lists_per_paper = Decimal(int(self.lists_per_paper))
             paper_price = Decimal(self.paper.price)
             num_of_papers = ((num_of_lists + possible_defect_list) / lists_per_paper)
+            num_of_papers = math.ceil(num_of_papers)
             # Perform the calculation
             total_paper_price = Decimal(num_of_papers) * Decimal(paper_price)
         else:
@@ -170,18 +172,6 @@ class ServiceOrder(models.Model):
         return self.service.name
 
 
-class Purchase(models.Model):
-    date = models.DateField(auto_now_add=True)
-    item = models.CharField(max_length=200)
-    unit_price = models.DecimalField(decimal_places=2, max_digits=40, null=True, blank=True)
-    quantity = models.PositiveIntegerField(null=True, blank=True)
-    total_price = models.DecimalField(decimal_places=2, max_digits=40, null=True, blank=True)
-    status = models.ForeignKey(Status, on_delete=models.CASCADE)
-
-    def __str__(self) -> str:
-        return self.item
-
-
 class CustomerDebt(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="debt")
@@ -199,14 +189,6 @@ class OrderPayment(models.Model):
 
     def __str__(self) -> str:
         return self.order.name
-
-
-class Debt(models.Model):
-    purchase = models.ForeignKey(Purchase, on_delete=models.CASCADE)
-    amount = models.DecimalField(decimal_places=2, max_digits=40)
-
-    def __str__(self) -> str:
-        return self.purchase.item
 
 
 class Inventory(models.Model):
