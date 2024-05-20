@@ -26,7 +26,8 @@ from .serializers import (
     CustomerSerializer, OrderReadSerializer,
     PaperTypeSerializer, InventoryReadSerializer,
     InventoryWriteSerializer, ServiceSerializer,
-    OrderDeleteSerializer, InventorySerializer
+    OrderDeleteSerializer, InventorySerializer,
+    StatusReadSerializer
 )
 
 from .custom import OrderCreateCustomSerializer
@@ -37,8 +38,12 @@ from users.permissions import IsAdminRole, IsManagerRole
 
 class StatusViewSet(ModelViewSet):
     queryset = Status.objects.all()
-    serializer_class = StatusSerializer
-    permission_classes = (IsAdminRole,)
+    # permission_classes = (IsManagerRole,)
+
+    def get_serializer_class(self):
+        if self.action in ['list', 'retrieve']:
+            return StatusReadSerializer
+        return StatusSerializer
 
 
 class BranchViewset(ModelViewSet):

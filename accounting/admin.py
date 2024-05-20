@@ -3,7 +3,7 @@ from .models import Expenses, ExpenseCategory
 
 
 class ExpenseAdmin(admin.ModelAdmin):
-    list_display = ('name', 'amount', 'category.name', 'branch.name', 'date')
+    list_display = ('name', 'amount', 'category', 'branch', 'date')
 
 
 

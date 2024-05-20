@@ -76,7 +76,7 @@ class Order(models.Model):
     total_price = models.DecimalField(decimal_places=2, max_digits=40)
     final_price = models.DecimalField(decimal_places=2, max_digits=40, null=True, blank=True)
     price_per_product = models.DecimalField(decimal_places=2, max_digits=40, null=True, blank=True)
-    status = models.ForeignKey(Status, on_delete=models.CASCADE)
+    status = models.ForeignKey(Status, on_delete=models.CASCADE, related_name='orders')
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
     num_of_product_per_list = models.IntegerField(null=True, blank=True)
     lists_per_paper = models.IntegerField(null=True, blank=True)

@@ -20,6 +20,16 @@ class StatusSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class StatusReadSerializer(serializers.ModelSerializer):
+    count = serializers.SerializerMethodField()
+    class Meta:
+        model = Status
+        fields = ['id', 'name', 'count']
+
+    def get_count(self, obj):
+        return obj.orders.count()
+
+
 class BranchSerializer(serializers.ModelSerializer):
     class Meta:
         model = Branch
