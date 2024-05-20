@@ -34,6 +34,8 @@ from .custom import OrderCreateCustomSerializer
 
 
 from users.permissions import IsAdminRole, IsManagerRole
+from main.pagination import CustomPagination
+
 
 
 class StatusViewSet(ModelViewSet):
@@ -122,6 +124,7 @@ class CustomerViewset(ModelViewSet):
 
 class OrderListView(generics.ListAPIView):
     queryset = Order.objects.all()
+    pagination_class = CustomPagination
     serializer_class = OrderReadSerializer
 
 
