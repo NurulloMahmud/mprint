@@ -65,7 +65,7 @@ class OrderListByStatusAPIView(generics.ListAPIView):
 class OrderListByUser(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
-        user = self.request.user
+        user = request.user
         if user.role.lower() == "admin":
             orders = Order.objects.all().order_by('-date')
         else:
