@@ -59,7 +59,7 @@ class OrderListByStatusAPIView(generics.ListAPIView):
 
     def get_queryset(self):
         status = self.kwargs['status']
-        return Order.objects.filter(status__name=status)
+        return Order.objects.filter(status__id=status)
 
 
 class OrderListByUser(APIView):
