@@ -24,6 +24,7 @@ class Expenses(models.Model):
 
 
 class Debt(models.Model):
+    created_at = models.DateField(auto_now_add=True)
     amount = models.DecimalField(decimal_places=2, max_digits=40)
     note = models.TextField()
 
