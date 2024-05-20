@@ -38,7 +38,7 @@ from users.permissions import IsAdminRole, IsManagerRole
 
 class StatusViewSet(ModelViewSet):
     queryset = Status.objects.all()
-    # permission_classes = (IsManagerRole,)
+    permission_classes = (IsManagerRole,)
 
     def get_serializer_class(self):
         if self.action in ['list', 'retrieve']:

@@ -13,6 +13,7 @@ from users.permissions import IsAdminRole, IsManagerRole, IsPrinterRole, IsFacto
 
 from .serializers import OrderUpdateSerializer
 from main.serializers import OrderReadSerializer
+from main.pagination import CustomPagination
 
 
 class OrderStatusAutoChange(APIView):
@@ -87,6 +88,12 @@ class OrderListByUser(APIView):
             orders = Order.objects.all().order_by('-date')
         else:
             orders = Order.objects.filter(branch=user.branch, status__name=user.role).order_by('-date')
+        
+        paginator = CustomPagination()
+        page = paginator.paginate_queryset(orders, request)
+        if page is not None:
+            serializer = OrderReadSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
 
         serializer = OrderReadSerializer(orders, many=True)
         return Response(serializer.data)
