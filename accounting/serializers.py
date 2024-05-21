@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import ExpenseCategory, Expenses
 from main.serializers import BranchSerializer
-from main.models import Branch
+from main.models import Branch, PaymentMethod
 
 
 
@@ -36,3 +36,9 @@ class ExpensesReadSerializer(serializers.ModelSerializer):
         instance.branch = branch_obj
         return super().update(instance, validated_data)
     
+
+class PaymentMethodSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PaymentMethod
+        fields = '__all__'
+

@@ -1,8 +1,10 @@
-from django.db import models
+from django.db import models, transaction
 from django.contrib.auth.models import AbstractUser
 from decimal import Decimal
 from django.core.exceptions import ValidationError
 import math
+from django.db.models import Sum
+
 
 
 class Branch(models.Model):
@@ -182,13 +184,44 @@ class CustomerDebt(models.Model):
         return self.customer.name
 
 
+class PaymentMethod(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self) -> str:
+        return self.name
+
+
 class OrderPayment(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="payments")
     amount = models.DecimalField(decimal_places=2, max_digits=40)
     date = models.DateField(auto_now_add=True)
+    method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self) -> str:
         return self.order.name
+    
+    def save(self, *args, **kwargs):
+        with transaction.atomic():
+            if not self.pk:  # If the order is being created (not updated)
+                if not CustomerDebt.objects.filter(order=self.order).exists():
+                    raise ValueError("Ushbu buyurtmaning qarzi yo'q")
+                customer_debt = CustomerDebt.objects.get(order=self.order)
+                if customer_debt.amount < self.amount:
+                    raise ValueError("Ushbu to'lov qarz miqdoridan ko'p")
+                if self.amount < 0:
+                    raise ValueError("To'lov miqdori to'g'ri emas")
+                customer_debt.amount -= self.amount
+                customer_debt.save()
+            else:
+                customer_debt = CustomerDebt.objects.get(order=self.order)
+                total_amount_paid = OrderPayment.objects.filter(order=self.order).aggregate(Sum('amount'))['amount__sum']
+                total_paid = total_amount_paid + self.amount
+                if total_paid > customer_debt.amount:
+                    raise ValueError("Ushbu to'lov qarz miqdoridan ko'p")
+                customer_debt.amount -= self.amount
+                customer_debt.save()
+                
+            super().save(*args, **kwargs)
 
 
 class Inventory(models.Model):
