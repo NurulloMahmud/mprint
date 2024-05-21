@@ -47,7 +47,7 @@ class OrderPaymentViewset(ModelViewSet):
 class CustomerDebtListView(generics.ListAPIView):
     queryset = Customer.objects.all()
     serializer_class = CustomerDebtReadSerializer
-    permission_classes = [IsAdminRole]
+    # permission_classes = [IsAdminRole]
 
 class DebtListByCustomer(APIView):
     permission_classes = [IsManagerRole]
