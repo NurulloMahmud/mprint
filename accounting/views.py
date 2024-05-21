@@ -45,15 +45,9 @@ class OrderPaymentViewset(ModelViewSet):
 
 
 class CustomerDebtListView(generics.ListAPIView):
+    queryset = Customer.objects.all()
     serializer_class = CustomerDebtReadSerializer
-    permission_classes = [IsManagerRole]
-
-    def get_queryset(self):
-        user = self.request.user
-        if user.role.lower() != 'admin':
-            return OrderPayment.objects.filter(branch=user.branch)
-        return OrderPayment.objects.all()
-
+    # permission_classes = [IsAdminRole]
 
 class DebtListByCustomer(APIView):
     permission_classes = [IsManagerRole]
