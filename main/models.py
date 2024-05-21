@@ -175,7 +175,7 @@ class ServiceOrder(models.Model):
 
 
 class CustomerDebt(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='debt')
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="debt")
     amount = models.DecimalField(decimal_places=2, max_digits=40)
     last_update = models.DateField(auto_now=True)

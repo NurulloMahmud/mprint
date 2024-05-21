@@ -1,5 +1,6 @@
 from django.urls import path, include
-from .views import ExpenseCategoryViewSet, ExpensesModelViewset, OrderPaymentViewset, PaymentMethodViewSet
+from .views import ExpenseCategoryViewSet, ExpensesModelViewset, OrderPaymentViewset, PaymentMethodViewSet \
+    , DebtListByCustomer
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
@@ -11,5 +12,6 @@ router.register(r'payment', OrderPaymentViewset, basename='payment')
 
 
 urlpatterns = [
-    path('', include(router.urls))
+    path('', include(router.urls)),
+    path('customer/debt/<int:pk>/', DebtListByCustomer.as_view()),
 ]

@@ -1,7 +1,8 @@
+from django.db.models import Sum
 from rest_framework import serializers
 from .models import ExpenseCategory, Expenses
-from main.serializers import BranchSerializer, OrderReadSerializer
-from main.models import Branch, PaymentMethod, OrderPayment
+from main.serializers import BranchSerializer, OrderReadSerializer, CustomerSerializer
+from main.models import Branch, PaymentMethod, OrderPayment, CustomerDebt, Customer, Order
 
 
 
@@ -57,3 +58,15 @@ class OrderPaymentWriteSerializer(serializers.ModelSerializer):
         model = OrderPayment
         fields = '__all__'
 
+
+class CustomerDebtReadSerializer(serializers.ModelSerializer):
+    order = serializers.SerializerMethodField()
+    customer = CustomerSerializer()
+
+    class Meta:
+        model = CustomerDebt
+        fields = '__all__'
+
+    def get_order(self, obj):
+        return Order.objects.filter(id=obj.order.id).values('id', 'name', 'final_price', 'date', 'status__name')
+    
