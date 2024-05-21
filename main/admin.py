@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import (
     Branch, Status, Paper, Customer, OrderPics,
     Order, Service, ServiceOrder, CustomerDebt, 
-    OrderPayment, CustomUser, PaperType,
+    OrderPayment, CustomUser, PaperType, PaymentMethod,
 )
 
 # Register your models here.
@@ -18,3 +18,4 @@ admin.site.register(OrderPayment)
 admin.site.register(CustomUser)
 admin.site.register(PaperType)
 admin.site.register(OrderPics)
+admin.site.register(PaymentMethod)
