@@ -4,9 +4,9 @@ from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
 
 from .models import ExpenseCategory, Expenses
-from .serializers import ExpenseCategorySerializer, PaymentMethodSerializer
+from .serializers import ExpenseCategorySerializer, PaymentMethodSerializer, OrderPaymentReadSerializer, OrderPaymentWriteSerializer
 from users.permissions import IsAdminRole, IsManagerRole
-from main.models import PaymentMethod
+from main.models import PaymentMethod, OrderPayment
 
 
 
@@ -28,4 +28,12 @@ class PaymentMethodViewSet(ModelViewSet):
     permission_classes = [IsAdminRole]
 
 
-# class OrderPayment
+class OrderPaymentViewset(ModelViewSet):
+    queryset = OrderPayment.objects.all()
+    permission_classes = [IsManagerRole]
+
+    def get_serializer_class(self):
+        if self.action in ['list', 'retrieve']:
+            return OrderPaymentReadSerializer
+        return OrderPaymentWriteSerializer
+

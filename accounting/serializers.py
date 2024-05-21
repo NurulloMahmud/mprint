@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import ExpenseCategory, Expenses
-from main.serializers import BranchSerializer
-from main.models import Branch, PaymentMethod
+from main.serializers import BranchSerializer, OrderReadSerializer
+from main.models import Branch, PaymentMethod, OrderPayment
 
 
 
@@ -40,5 +40,20 @@ class ExpensesReadSerializer(serializers.ModelSerializer):
 class PaymentMethodSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaymentMethod
+        fields = '__all__'
+
+
+class OrderPaymentReadSerializer(serializers.ModelSerializer):
+    method = PaymentMethodSerializer()
+    order = OrderReadSerializer()
+
+    class Meta:
+        model = OrderPayment
+        fields = '__all__'
+
+
+class OrderPaymentWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderPayment
         fields = '__all__'
 
