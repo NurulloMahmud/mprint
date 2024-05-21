@@ -203,16 +203,22 @@ class OrderPayment(models.Model):
     def save(self, *args, **kwargs):
         with transaction.atomic():
             if not self.pk:  # If the order is being created (not updated)
+                if self.amount > self.order.final_price:
+                    raise ValueError("To'lov miqdori to'g'ri emas")
                 if not CustomerDebt.objects.filter(order=self.order).exists():
                     raise ValueError("Ushbu buyurtmaning qarzi yo'q")
                 customer_debt = CustomerDebt.objects.get(order=self.order)
-                if customer_debt.amount < self.amount:
-                    raise ValueError("Ushbu to'lov qarz miqdoridan ko'p")
+                total_paid = OrderPayment.objects.filter(order=self.order).aggregate(Sum('amount'))['amount__sum']
                 if self.amount < 0:
                     raise ValueError("To'lov miqdori to'g'ri emas")
                 customer_debt.amount -= self.amount
                 customer_debt.save()
             else:
+                total_paid = OrderPayment.objects.filter(order=self.order).aggregate(Sum('amount'))['amount__sum']
+                if total_paid + self.amount > self.order.final_price:
+                    raise ValueError("Ushbu to'lov qarz miqdoridan ko'p")
+                if self.amount < 0:
+                    raise ValueError("To'lov miqdori to'g'ri emas")
                 customer_debt = CustomerDebt.objects.get(order=self.order)
                 total_amount_paid = OrderPayment.objects.filter(order=self.order).aggregate(Sum('amount'))['amount__sum']
                 total_paid = total_amount_paid + self.amount
