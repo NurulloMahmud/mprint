@@ -39,7 +39,7 @@ class OrderStatusAutoChange(APIView):
         elif request.user.role.lower() == "Pechat":
             status_obj = Status.objects.get_or_create(name="Qayta ishlash")
         elif request.user.role.lower() == "qayta ishlash":
-            status_obj = Status.objects.get_or_create(name="Final")
+            status_obj = Status.objects.get_or_create(name="Review")
         order.status = status_obj
         order.save()
         return Response({"success": True})

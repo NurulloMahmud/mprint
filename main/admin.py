@@ -3,6 +3,7 @@ from .models import (
     Branch, Status, Paper, Customer, OrderPics,
     Order, Service, ServiceOrder, CustomerDebt, 
     OrderPayment, CustomUser, PaperType, PaymentMethod,
+    
 )
 
 # Register your models here.
