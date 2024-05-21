@@ -96,7 +96,7 @@ class OrderListByUser(generics.ListAPIView):
         """
         user = self.request.user
         if user.role.lower() == "admin":
-            return Order.objects.all().order_by('-date')
+            return Order.objects.all().order_by('-date').exclude(status__name="Completed")
         else:
-            return Order.objects.filter(branch=user.branch, status__name=user.role).order_by('-date')
+            return Order.objects.filter(branch=user.branch, status__name=user.role.capitalize()).order_by('-date')
 
