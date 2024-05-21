@@ -7,6 +7,7 @@ from rest_framework import status
 from decimal import Decimal
 
 from django.shortcuts import get_object_or_404
+from django.db import transaction
 
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -17,7 +18,7 @@ from .models import (
     PaperType, Inventory,
     Paper, Service, CustomerDebt,
     OrderPayment, ServiceOrder,
-    OrderPics
+    OrderPics, PaymentMethod
 )
 
 from .serializers import (
@@ -157,6 +158,7 @@ class OrderCreateView(APIView):
                     description='List of service IDs involved'
                 ),
                 'initial_payment_amount': openapi.Schema(type=openapi.TYPE_NUMBER, format=openapi.FORMAT_FLOAT, description='Initial payment amount', default=0),
+                'initial_payment_method': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID of the payment method'),
                 'pics': openapi.Schema(
                     type=openapi.TYPE_ARRAY,
                     description='List of images for the order',
@@ -183,42 +185,45 @@ class OrderCreateView(APIView):
             return Response({"success": False, "message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            # Assuming all the numerical data is valid and conversions are not needed (handled in frontend or here with try-except)
-            order = Order.objects.create(
-                name=data['name'],
-                customer=customer_obj,
-                products_qty=data['products_qty'],
-                paper=paper_obj,
-                num_of_lists=data['num_of_lists'],
-                total_sqr_meter=data['total_sqr_meter'],
-                possible_defect_list=data.get('num_possible_defect_list', 0),
-                price_per_list=None,  # to be calculated
-                total_price=0,  # to be calculated
-                final_price=Decimal(data['final_price']),
-                price_per_product=None,  # to be calculated
-                status=status_obj,
-                branch=branch_obj,
-                num_of_product_per_list=data['num_of_product_per_list'],
-                lists_per_paper=data['num_of_lists_per_paper']
-            )
+            with transaction.atomic():
+                # Assuming all the numerical data is valid and conversions are not needed (handled in frontend or here with try-except)
+                order = Order.objects.create(
+                    name=data['name'],
+                    customer=customer_obj,
+                    products_qty=data['products_qty'],
+                    paper=paper_obj,
+                    num_of_lists=data['num_of_lists'],
+                    total_sqr_meter=data['total_sqr_meter'],
+                    possible_defect_list=data.get('num_possible_defect_list', 0),
+                    price_per_list=None,  # to be calculated
+                    total_price=0,  # to be calculated
+                    final_price=Decimal(data['final_price']),
+                    price_per_product=None,  # to be calculated
+                    status=status_obj,
+                    branch=branch_obj,
+                    num_of_product_per_list=data['num_of_product_per_list'],
+                    lists_per_paper=data['num_of_lists_per_paper']
+                )
 
-            order.num_of_lists = (int(order.products_qty) // int(order.num_of_product_per_list)) + int(order.possible_defect_list)
+                order.num_of_lists = (int(order.products_qty) // int(order.num_of_product_per_list)) + int(order.possible_defect_list)
 
-            # Calculate total price of order
-            service_ids = request.data.get('services', [])
-            order.calculate(service_ids)
+                # Calculate total price of order
+                service_ids = request.data.get('services', [])
+                order.calculate(service_ids)
 
-            # Handle Payments and Debts
-            initial_payment_amount = Decimal(data.get('initial_payment_amount', 0))
-            final_price = Decimal(order.final_price)
-            if initial_payment_amount < final_price:
-                CustomerDebt.objects.create(customer=customer_obj, order=order, amount=final_price - initial_payment_amount)
-            if initial_payment_amount > 0:
-                OrderPayment.objects.create(order=order, amount=initial_payment_amount)
+                # Handle Payments and Debts
+                initial_payment_amount = Decimal(data.get('initial_payment_amount', 0))
+                final_price = Decimal(order.final_price)
+                if initial_payment_amount < final_price:
+                    CustomerDebt.objects.create(customer=customer_obj, order=order, amount=final_price - initial_payment_amount)
+                if initial_payment_amount > 0:
+                    initial_payment_method = data.get('initial_payment_method', None)
+                    method_obj = get_object_or_404(PaymentMethod, id=initial_payment_method)
+                    OrderPayment.objects.create(order=order, amount=initial_payment_amount, method=method_obj)
 
-            # Handle image uploads
-            for image_file in request.FILES.getlist('pics'):
-                OrderPics.objects.create(order=order, pic=image_file)
+                # Handle image uploads
+                for image_file in request.FILES.getlist('pics'):
+                    OrderPics.objects.create(order=order, pic=image_file)
 
             return Response({"success": True, "message": "Order created successfully", "order_id": order.id}, status=status.HTTP_201_CREATED)
         
