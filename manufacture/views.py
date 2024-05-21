@@ -36,19 +36,19 @@ class OrderStatusAutoChange(APIView):
         order = get_object_or_404(Order, id=pk)
         if request.user.role.lower() in ["admin", "manager"]:
             if order.status.name.lower() == "pending":
-                status_obj = Status.objects.get_or_create(name="Pechat")
+                status_obj = Status.objects.get(name="Pechat")
             elif order.status.name.lower() == "pechat":
-                status_obj = Status.objects.get_or_create(name="Qayta ishlash")
+                status_obj = Status.objects.get(name="Qayta ishlash")
             elif order.status.name.lower() == "qayta ishlash":
-                status_obj = Status.objects.get_or_create(name="Review")
+                status_obj = Status.objects.get(name="Review")
             elif order.status.name.lower() == "review":
-                status_obj = Status.objects.get_or_create(name="Completed")
+                status_obj = Status.objects.get(name="Completed")
             elif order.status.name.lower() == "completed":
                 return Response({"success": False}, status=404)
         elif request.user.role.lower() == "pechat":
-            status_obj = Status.objects.get_or_create(name="Qayta ishlash")
+            status_obj = Status.objects.get(name="Qayta ishlash")
         elif request.user.role.lower() == "qayta ishlash":
-            status_obj = Status.objects.get_or_create(name="Review")
+            status_obj = Status.objects.get(name="Review")
         order.status = status_obj
         order.save()
         return Response({"success": True})
