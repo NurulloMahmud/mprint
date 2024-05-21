@@ -60,13 +60,14 @@ class OrderPaymentWriteSerializer(serializers.ModelSerializer):
 
 
 class CustomerDebtReadSerializer(serializers.ModelSerializer):
-    order = serializers.SerializerMethodField()
-    customer = CustomerSerializer()
+    debt = serializers.SerializerMethodField()
 
     class Meta:
-        model = CustomerDebt
+        model = Customer
         fields = '__all__'
 
-    def get_order(self, obj):
-        return Order.objects.filter(id=obj.order.id).values('id', 'name', 'final_price', 'date', 'status__name')
+    def get_debt(self, obj):
+        if CustomerDebt.objects.filter(customer=obj).exists():
+            return CustomerDebt.objects.filter(customer=obj).values('order__name', 'amount').first()
+        return 0
     
