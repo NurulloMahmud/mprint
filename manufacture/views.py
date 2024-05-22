@@ -104,6 +104,7 @@ class OrderListByUser(generics.ListAPIView):
 class CompletedOrdersList(generics.ListAPIView):
     serializer_class = OrderReadSerializer
     permission_classes = [IsManagerRole]
+    pagination_class = CustomPagination
 
     def get_queryset(self):
         return Order.objects.filter(status__name="Completed")
