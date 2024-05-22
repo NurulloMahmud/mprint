@@ -3,7 +3,7 @@ from rest_framework import serializers
 from .models import ExpenseCategory, Expenses
 from main.serializers import BranchSerializer, OrderReadSerializer, CustomerSerializer
 from main.models import Branch, PaymentMethod, OrderPayment, CustomerDebt, Customer, Order
-
+from decimal import Decimal
 
 
 class ExpenseCategorySerializer(serializers.ModelSerializer):
@@ -69,7 +69,7 @@ class CustomerDebtReadSerializer(serializers.ModelSerializer):
     def get_debt(self, obj):
         if CustomerDebt.objects.filter(customer=obj).exists():
             debt_amount = CustomerDebt.objects.filter(customer=obj).aggregate(Sum('amount'))['amount__sum']
-            return debt_amount if debt_amount is not None else 0
-        return 0
+            return Decimal(debt_amount) if debt_amount is not None else Decimal(0)
+        return Decimal(0)
 
     
