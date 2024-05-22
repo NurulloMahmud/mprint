@@ -1,4 +1,4 @@
-from django.db.models import Sum
+from django.db.models import Sum, Q
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -7,11 +7,13 @@ from rest_framework import generics
 
 from .models import ExpenseCategory, Expenses
 from .serializers import ExpenseCategorySerializer, PaymentMethodSerializer, OrderPaymentReadSerializer, OrderPaymentWriteSerializer \
-    , CustomerDebtReadSerializer
+    , CustomerDebtReadSerializer, OrdersDebtListSerializer
 from users.permissions import IsAdminRole, IsManagerRole
 from main.models import PaymentMethod, OrderPayment, Customer, CustomerDebt
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+
+from main.models import Order, CustomerDebt
 
 
 
@@ -90,4 +92,13 @@ class DebtListByCustomer(APIView):
         debts = CustomerDebt.objects.filter(customer=customer)
         serializer = CustomerDebtReadSerializer(debts, many=True)
         return Response(serializer.data)
+
+
+class OrdersDebtList(generics.ListAPIView):
+    serializer_class = OrdersDebtListSerializer
+    permission_classes = [IsManagerRole]
+
+    def get_queryset(self):
+        orders_with_debt = Order.objects.filter(Q(debt__amount__gt=0)).distinct()
+        return orders_with_debt
 
