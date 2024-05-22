@@ -100,3 +100,11 @@ class OrderListByUser(generics.ListAPIView):
         else:
             return Order.objects.filter(branch=user.branch, status__name=user.role.capitalize()).order_by('-date')
 
+
+class CompletedOrdersList(generics.ListAPIView):
+    serializer_class = OrderReadSerializer
+    permission_classes = [IsManagerRole]
+
+    def get_queryset(self):
+        return Order.objects.filter(status__name="Completed")
+
