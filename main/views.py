@@ -212,7 +212,8 @@ class OrderCreateView(APIView):
                 order.calculate(service_ids)
 
                 # Handle Payments and Debts
-                initial_payment_amount = Decimal(data.get('initial_payment_amount', 0))
+                initial_payment_amount = data.get('initial_payment_amount', 0)
+                initial_payment_amount = Decimal(initial_payment_amount)
                 final_price = Decimal(order.final_price)
                 if initial_payment_amount < final_price:
                     CustomerDebt.objects.create(customer=customer_obj, order=order, amount=final_price - initial_payment_amount)
