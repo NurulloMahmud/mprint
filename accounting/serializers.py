@@ -87,3 +87,20 @@ class OrdersDebtListSerializer(serializers.ModelSerializer):
             return Decimal(debt_amount) if debt_amount is not None else Decimal(0)
         return Decimal(0)
 
+
+class ExpensesWriteSerializer(serializers.ModelSerializer):
+    category = serializers.PrimaryKeyRelatedField(queryset=ExpenseCategory.objects.all())
+    branch = serializers.PrimaryKeyRelatedField(queryset=Branch.objects.all())
+
+    class Meta:
+        model = Expenses
+        fields = '__all__'
+
+class ExpensesReadSerializer(serializers.ModelSerializer):
+    category = ExpenseCategory()
+    branch = BranchSerializer()
+
+    class Meta:
+        model = Expenses
+        fields = '__all__'
+

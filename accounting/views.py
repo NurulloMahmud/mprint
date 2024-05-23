@@ -7,7 +7,7 @@ from rest_framework import generics
 
 from .models import ExpenseCategory, Expenses
 from .serializers import ExpenseCategorySerializer, PaymentMethodSerializer, OrderPaymentReadSerializer, OrderPaymentWriteSerializer \
-    , CustomerDebtReadSerializer, OrdersDebtListSerializer
+    , CustomerDebtReadSerializer, OrdersDebtListSerializer, ExpensesWriteSerializer, ExpensesReadSerializer
 from users.permissions import IsAdminRole, IsManagerRole
 from main.models import PaymentMethod, OrderPayment, Customer, CustomerDebt
 from drf_yasg.utils import swagger_auto_schema
@@ -26,8 +26,12 @@ class ExpenseCategoryViewSet(ModelViewSet):
 
 class ExpensesModelViewset(ModelViewSet):
     queryset = Expenses.objects.all()
-    serializer_class = ExpenseCategorySerializer
     permission_classes = [IsAdminRole]
+
+    def get_serializer_class(self):
+        if self.action in ['list', 'retrieve']:
+            return ExpensesReadSerializer
+        return ExpensesWriteSerializer
 
 
 class PaymentMethodViewSet(ModelViewSet):
