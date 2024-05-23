@@ -15,10 +15,11 @@ async def send_messages(bot_instance, users_info):
                 f"Final Price: {user_info['final_price']}\n"
                 f"Price per Product: {user_info['price_per_product']}\n"
                 f"Product Quantity: {user_info['product_qty']}\n"
-                f"Customer Telegram ID: {user_id}"
+                f"Customer Telegram ID: {user_id}" # bu kerakmas
             )
         except Exception as e:
             print(f"Fail {user_id}: {e}")
+            # print emas shu funksiya biryoli customerga jonatadigan bolsin shu datani
 
 async def main():
     bot_instance = Bot(token=API_TOKEN)
