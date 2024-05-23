@@ -87,6 +87,10 @@ class Order(models.Model):
         if not self.pk:  # If the order is being created (not updated)
             pending_status = Status.objects.get(name="Pending")
             self.status = pending_status
+        else:
+            obj = Order.objects.get(pk=self.pk)
+            if self.status.name.lower() == "pending" and obj.status.name.lower() in ["completed", "review"]:
+                raise ValidationError("Order cannot be updated")
         super().save(*args, **kwargs)
     
     def delete(self, *args, **kwargs):
