@@ -103,6 +103,6 @@ class OrdersDebtList(generics.ListAPIView):
     permission_classes = [IsManagerRole]
 
     def get_queryset(self):
-        orders_with_debt = Order.objects.filter(Q(debt__amount__gt=0)).distinct().values('id', 'name', 'customer__name','final_price', 'date', 'status__name', 'debt__amount')
+        orders_with_debt = Order.objects.filter(Q(debt__amount__gt=0)).distinct()
         return orders_with_debt
 
