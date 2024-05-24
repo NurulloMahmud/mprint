@@ -128,6 +128,9 @@ class OrderListView(generics.ListAPIView):
     pagination_class = CustomPagination
     serializer_class = OrderReadSerializer
 
+    def get_queryset(self):
+        return Order.objects.all().exclude(status__name="Completed")
+
 
 class OrderCreateView(APIView):
     @swagger_auto_schema(
