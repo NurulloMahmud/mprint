@@ -36,7 +36,9 @@ from .custom import OrderCreateCustomSerializer
 
 from users.permissions import IsAdminRole, IsManagerRole
 from main.pagination import CustomPagination
-
+# Bot
+import asyncio
+from main.bot import main
 
 
 class StatusViewSet(ModelViewSet):
@@ -234,6 +236,25 @@ class OrderCreateView(APIView):
             # Handle image uploads
             for image_file in request.FILES.getlist('pics'):
                 OrderPics.objects.create(order=order, pic=image_file)
+            
+            #Bot
+            price_per_product = Decimal(order.final_price) / Decimal(order.products_qty)
+            price_per_products = f'{price_per_product}'
+
+
+            users_info = [
+                {
+                    'user_id': customer_obj.telegram_id,
+                    'order_name': order.name,
+                    'date': str(order.date),
+                    'initial_payment': f'{initial_payment_amount}',
+                    'final_payment': f'{order.final_price}',
+                    'price_per_product': price_per_products,
+                    'products_qty': order.products_qty,
+                }
+            ]
+            print(users_info)
+            asyncio.run(main(users_info))
 
         return Response({"success": True, "message": "Order created successfully", "order_id": order.id}, status=status.HTTP_201_CREATED)
         
