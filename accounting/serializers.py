@@ -75,12 +75,16 @@ class CustomerDebtReadSerializer(serializers.ModelSerializer):
     
 class OrdersDebtListSerializer(serializers.ModelSerializer):
     customer = serializers.SerializerMethodField()
+    debt = serializers.SerializerMethodField()
 
     class Meta:
         model = Order
         fields = ['id', 'name', 'customer', 'final_price', 'debt', 'total_price']
     def get_customer(self, obj):
         return obj.customer.name
+    def get_debt(self, obj):
+        debt = CustomerDebt.objects.get(order=obj)
+        return Decimal(debt.amount)
 
 
 class ExpensesWriteSerializer(serializers.ModelSerializer):
