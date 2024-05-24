@@ -208,23 +208,25 @@ class OrderPayment(models.Model):
         with transaction.atomic():
             if not self.pk:  # If the order is being created (not updated)
                 if self.amount > self.order.final_price:
-                    raise ValueError("To'lov miqdori to'g'ri emas")
+                    raise ValidationError("To'lov miqdori to'g'ri emas")
                 if not CustomerDebt.objects.filter(order=self.order).exists():
-                    raise ValueError("Ushbu buyurtmaning qarzi yo'q")
+                    raise ValidationError("Ushbu buyurtmaning qarzi yo'q")
+                total_paid = OrderPayment.objects.filter(order=self.order).aggregate(Sum('amount'))['amount__sum'] or 0
                 customer_debt = CustomerDebt.objects.get(order=self.order)
-                total_paid = OrderPayment.objects.filter(order=self.order).aggregate(Sum('amount'))['amount__sum']
+                if total_paid + self.amount > self.order.final_price:
+                    raise ValidationError("Ushbu to'lov qarz miqdoridan ko'p")
                 if self.amount < 0:
-                    raise ValueError("To'lov miqdori to'g'ri emas")
+                    raise ValidationError("To'lov miqdori to'g'ri emas")
                 customer_debt.amount -= self.amount
                 customer_debt.save()
             else:
-                total_paid = OrderPayment.objects.filter(order=self.order).aggregate(Sum('amount'))['amount__sum']
+                total_paid = OrderPayment.objects.filter(order=self.order).aggregate(Sum('amount'))['amount__sum'] or 0
                 if total_paid + self.amount > self.order.final_price:
-                    raise ValueError("Ushbu to'lov qarz miqdoridan ko'p")
+                    raise ValidationError("Ushbu to'lov qarz miqdoridan ko'p")
                 if self.amount < 0:
-                    raise ValueError("To'lov miqdori to'g'ri emas")
+                    raise ValidationError("To'lov miqdori to'g'ri emas")
                 customer_debt = CustomerDebt.objects.get(order=self.order)
-                total_amount_paid = OrderPayment.objects.filter(order=self.order).aggregate(Sum('amount'))['amount__sum']
+                total_amount_paid = OrderPayment.objects.filter(order=self.order).aggregate(Sum('amount'))['amount__sum'] or 0
                 total_paid = total_amount_paid + self.amount
                 if total_paid > customer_debt.amount:
                     raise ValueError("Ushbu to'lov qarz miqdoridan ko'p")
@@ -232,6 +234,7 @@ class OrderPayment(models.Model):
                 customer_debt.save()
                 
             super().save(*args, **kwargs)
+
 
 
 class Inventory(models.Model):

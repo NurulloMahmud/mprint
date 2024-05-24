@@ -54,6 +54,8 @@ class OrderPaymentReadSerializer(serializers.ModelSerializer):
 
 
 class OrderPaymentWriteSerializer(serializers.ModelSerializer):
+    method = serializers.PrimaryKeyRelatedField(queryset=PaymentMethod.objects.all())
+    
     class Meta:
         model = OrderPayment
         fields = '__all__'
