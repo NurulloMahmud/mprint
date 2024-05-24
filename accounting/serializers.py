@@ -98,7 +98,7 @@ class ExpensesWriteSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ExpensesReadSerializer(serializers.ModelSerializer):
-    category = ExpenseCategory()
+    category = ExpenseCategorySerializer()
     branch = BranchSerializer()
 
     class Meta:
