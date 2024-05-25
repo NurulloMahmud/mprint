@@ -13,9 +13,9 @@ async def send_messages(bot_instance, users_info):
                 f"Order Name: {user_info['order_name']}\n"
                 f"Date: {user_info['date']}\n"
                 f"Initial Payment: {user_info['initial_payment']}\n"
-                f"Final Price: {user_info['final_price']}\n"
+                f"Final Price: {user_info['final_payment']}\n"
                 f"Price per Product: {user_info['price_per_product']}\n"
-                f"Product Quantity: {user_info['product_qty']}\n"
+                f"Product Quantity: {user_info['products_qty']}\n"
             )
         except Exception as e:
             print(f"Failed to send message to {user_id}: {e}")
@@ -32,7 +32,6 @@ async def main(users_info):
         await bot_instance.close()
     except Exception as e:
         print(f"An error occurred: {e}")
-
 
 if __name__ == '__main__':
     asyncio.run(main(user_info))

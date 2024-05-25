@@ -253,8 +253,8 @@ class OrderCreateView(APIView):
                     'products_qty': order.products_qty,
                 }
             ]
-            print(users_info)
-            asyncio.run(main(users_info))
+            # print(users_info)
+        asyncio.run(main(users_info))
 
         return Response({"success": True, "message": "Order created successfully", "order_id": order.id}, status=status.HTTP_201_CREATED)
         
