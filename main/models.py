@@ -116,6 +116,9 @@ class Order(models.Model):
             num_of_papers = math.ceil(num_of_papers)
             # Perform the calculation
             total_paper_price = Decimal(num_of_papers) * Decimal(paper_price)
+            # subtract num of papers
+            self.paper.available_qty -= num_of_papers
+            self.paper.save()
             # add paper price to paper expenses
             from accounting.models import PaperExpenses
             PaperExpenses.objects.create(
