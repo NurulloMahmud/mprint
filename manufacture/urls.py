@@ -3,7 +3,7 @@ from django.urls import path
 from .views import (
     OrderStatusAutoChange, OrderStatusChange,
     OrderListByStatusAPIView, OrderListByUser,
-    CompletedOrdersList
+    CompletedOrdersList, ActiveOrdersList
 )
 
 
@@ -14,4 +14,5 @@ urlpatterns = [
     path('status/list/<int:status>/', OrderListByStatusAPIView.as_view()),
     path('orders/list/', OrderListByUser.as_view()),
     path('orders/completed/list/', CompletedOrdersList.as_view()),
+    path('orders/active/list/', ActiveOrdersList.as_view()),
 ]

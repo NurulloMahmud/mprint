@@ -53,7 +53,6 @@ class OrderStatusAutoChange(APIView):
         order.save()
         return Response({"success": True})
 
-
 class OrderStatusChange(generics.UpdateAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderUpdateSerializer
@@ -62,7 +61,6 @@ class OrderStatusChange(generics.UpdateAPIView):
     def get_serializer_context(self):
         return {"request": self.request}
 
-
 class OrderListByStatusAPIView(generics.ListAPIView):
     serializer_class = OrderReadSerializer
     # permission_classes = [IsManagerRole]
@@ -70,7 +68,6 @@ class OrderListByStatusAPIView(generics.ListAPIView):
     def get_queryset(self):
         status = self.kwargs['status']
         return Order.objects.filter(status__id=status)
-
 
 class OrderListByUser(generics.ListAPIView):
     serializer_class = OrderReadSerializer
@@ -100,7 +97,6 @@ class OrderListByUser(generics.ListAPIView):
         else:
             return Order.objects.filter(branch=user.branch, status__name=user.role.capitalize()).order_by('-date')
 
-
 class CompletedOrdersList(generics.ListAPIView):
     serializer_class = OrderReadSerializer
     permission_classes = [IsManagerRole]
@@ -112,4 +108,11 @@ class CompletedOrdersList(generics.ListAPIView):
         if not start_date or not end_date:
             return Order.objects.none()
         return Order.objects.filter(status__name="Completed", date__range=[start_date, end_date]).order_by('-date')
+
+class ActiveOrdersList(generics.ListAPIView):
+    serializer_class = OrderReadSerializer
+    permission_classes = [IsManagerRole]
+
+    def get_queryset(self):
+        return Order.objects.all().exclude(status__name="Completed").values('id', 'name', 'final_price', 'date')
 

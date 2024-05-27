@@ -13,12 +13,10 @@ class PaperTypeSerializer(serializers.ModelSerializer):
         model = PaperType
         fields = "__all__"
 
-
 class StatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = Status
         fields = "__all__"
-
 
 class StatusReadSerializer(serializers.ModelSerializer):
     count = serializers.SerializerMethodField()
@@ -29,12 +27,10 @@ class StatusReadSerializer(serializers.ModelSerializer):
     def get_count(self, obj):
         return obj.orders.count()
 
-
 class BranchSerializer(serializers.ModelSerializer):
     class Meta:
         model = Branch
         fields = "__all__"
-
 
 class PaperReadSerializer(serializers.ModelSerializer):
     paper_type = PaperTypeSerializer()
@@ -44,24 +40,20 @@ class PaperReadSerializer(serializers.ModelSerializer):
         model = Paper
         fields = "__all__"
 
-
 class PaperWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Paper
         fields = "__all__"
-
 
 class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
         fields = "__all__"
    
-
 class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Service
         fields = "__all__"
-
 
 class InventoryReadSerializer(serializers.ModelSerializer):
     branch = BranchSerializer(read_only=True)
@@ -82,37 +74,31 @@ class InventoryReadSerializer(serializers.ModelSerializer):
 
         return data
 
-
 class InventoryWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Inventory
         fields = "__all__"
-
 
 class OrderPicsSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderPics
         fields = ['pic']
 
-
 class CustomerDebtSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomerDebt
         fields = "__all__"
-
 
 class OrderPaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderPayment
         fields = "__all__"
 
-
 class ServiceOrderSerializer(serializers.ModelSerializer):
     service = ServiceSerializer()
     class Meta:
         model = ServiceOrder
         fields = ['service', 'total_price']
-
 
 class OrderReadSerializer(serializers.ModelSerializer):
     customer = CustomerSerializer()
@@ -128,7 +114,6 @@ class OrderReadSerializer(serializers.ModelSerializer):
         model = Order
         fields = "__all__"
 
-
 class OrderDeleteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
@@ -140,7 +125,6 @@ class OrderDeleteSerializer(serializers.ModelSerializer):
         else:
             instance.delete()
             return instance
-
 
 class InventorySerializer(serializers.ModelSerializer):
     branch = BranchSerializer()
@@ -160,3 +144,9 @@ class InventorySerializer(serializers.ModelSerializer):
         branch_obj = Branch.objects.get(id=branch_data['id'])
         instance.branch = branch_obj
         return super().update(instance, validated_data)
+
+class ActiveOrdersSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = ['id', 'name', 'final_price', 'date']
+
