@@ -139,3 +139,12 @@ class InventoryExpenseSummarySerializer(serializers.Serializer):
     item_name = serializers.CharField(source='item__name')
     total_quantity = serializers.FloatField()
     total_amount = serializers.DecimalField(max_digits=40, decimal_places=2)
+
+class InventoryExpenseCreateSerializer(serializers.ModelSerializer):
+    item = serializers.PrimaryKeyRelatedField(queryset=Inventory.objects.all())
+    branch = serializers.PrimaryKeyRelatedField(queryset=Branch.objects.all())
+    order = serializers.PrimaryKeyRelatedField(queryset=Order.objects.all())
+
+    class Meta:
+        model = InventoryExpense
+        fields = '__all__'

@@ -36,9 +36,11 @@ class InventoryExpense(models.Model):
     quantity = models.FloatField()
     amount = models.DecimalField(decimal_places=2, max_digits=40, null=True, blank=True)
     created_at = models.DateField(auto_now_add=True)
+    branch = models.ForeignKey('main.Branch', on_delete=models.CASCADE, null=True, blank=True)
 
     def save(self, *args, **kwargs):
         self.amount = self.item.cost * self.quantity
+        self.branch = self.item.branch
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -50,8 +52,10 @@ class PaperExpenses(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="paper_expenses")
     quantity = models.IntegerField()
     amount = models.DecimalField(decimal_places=2, max_digits=40, null=True, blank=True)
+    branch = models.ForeignKey('main.Branch', on_delete=models.CASCADE, null=True, blank=True)
 
     def save(self, *args, **kwargs):
         self.amount = self.paper.price * self.quantity
+        self.branch = self.paper.branch
         super().save(*args, **kwargs)
 

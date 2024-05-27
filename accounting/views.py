@@ -8,7 +8,8 @@ from rest_framework import generics
 from .models import ExpenseCategory, Expenses, InventoryExpense
 from .serializers import ExpenseCategorySerializer, PaymentMethodSerializer, OrderPaymentReadSerializer, OrderPaymentWriteSerializer \
     , CustomerDebtReadSerializer, OrdersDebtListSerializer, ExpensesWriteSerializer, ExpensesReadSerializer \
-    , InventorySerializer, InventoryExpenseSerializer, PaperUsageSummarySerializer, InventoryExpenseSummarySerializer
+    , InventorySerializer, InventoryExpenseSerializer, PaperUsageSummarySerializer, InventoryExpenseSummarySerializer, \
+    InventoryExpenseCreateSerializer
 from users.permissions import IsAdminRole, IsManagerRole
 from main.models import PaymentMethod, OrderPayment, Customer, CustomerDebt
 from drf_yasg.utils import swagger_auto_schema
@@ -154,3 +155,9 @@ class InventoryExpenseSummaryView(generics.ListAPIView):
             total_quantity=Sum('quantity'),
             total_amount=Sum(F('amount'))
         )
+
+class InventoryExpenseCreateView(generics.CreateAPIView):
+    serializer_class = InventoryExpenseCreateSerializer
+    permission_classes = [IsManagerRole]
+    queryset = InventoryExpense.objects.all()
+
