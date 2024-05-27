@@ -11,7 +11,7 @@ from drf_yasg import openapi
 from main.models import Branch, Service, Order, Status
 from users.permissions import IsAdminRole, IsManagerRole, IsPrinterRole, IsFactoryRole
 
-from .serializers import OrderUpdateSerializer
+from .serializers import OrderUpdateSerializer, ActiveOrdersSerializer
 from main.serializers import OrderReadSerializer
 from main.pagination import CustomPagination
 
@@ -110,7 +110,7 @@ class CompletedOrdersList(generics.ListAPIView):
         return Order.objects.filter(status__name="Completed", date__range=[start_date, end_date]).order_by('-date')
 
 class ActiveOrdersList(generics.ListAPIView):
-    serializer_class = OrderReadSerializer
+    serializer_class = ActiveOrdersSerializer
     permission_classes = [IsManagerRole]
 
     def get_queryset(self):

@@ -19,3 +19,8 @@ class OrderUpdateSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+class ActiveOrdersSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = ['id', 'name', 'final_price', 'date']
+
