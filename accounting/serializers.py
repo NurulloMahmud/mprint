@@ -11,7 +11,6 @@ class ExpenseCategorySerializer(serializers.ModelSerializer):
         model = ExpenseCategory
         fields = '__all__'
     
-
 class ExpensesReadSerializer(serializers.ModelSerializer):
     category = ExpenseCategory()
     branch = BranchSerializer()
@@ -37,12 +36,10 @@ class ExpensesReadSerializer(serializers.ModelSerializer):
         instance.branch = branch_obj
         return super().update(instance, validated_data)
     
-
 class PaymentMethodSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaymentMethod
         fields = '__all__'
-
 
 class OrderPaymentReadSerializer(serializers.ModelSerializer):
     method = PaymentMethodSerializer()
@@ -52,7 +49,6 @@ class OrderPaymentReadSerializer(serializers.ModelSerializer):
         model = OrderPayment
         fields = '__all__'
 
-
 class OrderPaymentWriteSerializer(serializers.ModelSerializer):
     method = serializers.PrimaryKeyRelatedField(queryset=PaymentMethod.objects.all())
     
@@ -60,9 +56,9 @@ class OrderPaymentWriteSerializer(serializers.ModelSerializer):
         model = OrderPayment
         fields = '__all__'
 
-
 class CustomerDebtReadSerializer(serializers.ModelSerializer):
     debt = serializers.SerializerMethodField()
+    orders = serializers.SerializerMethodField()
 
     class Meta:
         model = Customer
@@ -73,7 +69,8 @@ class CustomerDebtReadSerializer(serializers.ModelSerializer):
             debt_amount = CustomerDebt.objects.filter(customer=obj).aggregate(Sum('amount'))['amount__sum']
             return Decimal(debt_amount) if debt_amount is not None else Decimal(0)
         return Decimal(0)
-
+    def get_orders(self, obj):
+        return Order.objects.filter(customer=obj).count()
     
 class OrdersDebtListSerializer(serializers.ModelSerializer):
     customer = serializers.SerializerMethodField()
@@ -87,7 +84,6 @@ class OrdersDebtListSerializer(serializers.ModelSerializer):
     def get_debt(self, obj):
         debt = CustomerDebt.objects.get(order=obj)
         return Decimal(debt.amount)
-
 
 class ExpensesWriteSerializer(serializers.ModelSerializer):
     category = serializers.PrimaryKeyRelatedField(queryset=ExpenseCategory.objects.all())

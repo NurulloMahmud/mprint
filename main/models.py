@@ -43,7 +43,6 @@ class Status(models.Model):
 
 
 class Paper(models.Model):
-    name = models.CharField(max_length=100)
     paper_type = models.ForeignKey(PaperType, on_delete=models.CASCADE, null=True, blank=True)
     grammaj = models.CharField(max_length=250, null=True, blank=True)
     cost = models.DecimalField(decimal_places=2, max_digits=40)
@@ -52,7 +51,7 @@ class Paper(models.Model):
     available_qty = models.IntegerField(null=True, blank=True)
 
     def __str__(self) -> str:
-        return self.name
+        return self.grammaj
 
 
 class Customer(models.Model):
@@ -133,7 +132,6 @@ class Order(models.Model):
         self.price_per_list = self.final_price / int(self.num_of_lists) if self.num_of_lists else Decimal(0)
         self.price_per_product = self.final_price / int(self.products_qty) if self.products_qty else Decimal(0)
         self.save()
-
 
     def __str__(self):
         return self.name
@@ -236,14 +234,31 @@ class OrderPayment(models.Model):
             super().save(*args, **kwargs)
 
 
-
 class Inventory(models.Model):
     name = models.CharField(max_length=100)
     cost = models.DecimalField(decimal_places=2, max_digits=40)
-    price = models.DecimalField(decimal_places=2, max_digits=40)
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
     available = models.IntegerField(default=0)
+    total_price = models.DecimalField(decimal_places=2, max_digits=40, default=0)
+
+    def save(self, *args, **kwargs):
+        self.total_price = self.cost * self.available
+        super().save(*args, **kwargs)
 
     def __str__(self) -> str:
         return self.name
 
+
+class InventoryExpense(models.Model):
+    item = models.ForeignKey(Inventory, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="inventory_expenses")
+    quantity = models.FloatField()
+    amount = models.DecimalField(decimal_places=2, max_digits=40, null=True, blank=True)
+    created_at = models.DateField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        self.amount = self.item.cost * self.quantity
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.item.name
