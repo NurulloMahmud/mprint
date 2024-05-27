@@ -23,7 +23,6 @@ class ExpenseCategoryViewSet(ModelViewSet):
     serializer_class = ExpenseCategorySerializer
     permission_classes = [IsAdminRole]
 
-
 class ExpensesModelViewset(ModelViewSet):
     queryset = Expenses.objects.all()
     permission_classes = [IsAdminRole]
@@ -33,12 +32,10 @@ class ExpensesModelViewset(ModelViewSet):
             return ExpensesReadSerializer
         return ExpensesWriteSerializer
 
-
 class PaymentMethodViewSet(ModelViewSet):
     queryset = PaymentMethod.objects.all()
     serializer_class = PaymentMethodSerializer
     permission_classes = [IsAdminRole]
-
 
 class OrderPaymentViewset(ModelViewSet):
     queryset = OrderPayment.objects.all()
@@ -49,11 +46,10 @@ class OrderPaymentViewset(ModelViewSet):
             return OrderPaymentReadSerializer
         return OrderPaymentWriteSerializer
 
-
 class CustomerDebtListView(generics.ListAPIView):
     queryset = Customer.objects.all()
     serializer_class = CustomerDebtReadSerializer
-    # permission_classes = [IsAdminRole]
+    permission_classes = [IsAdminRole]
 
 class DebtListByCustomer(APIView):
     permission_classes = [IsManagerRole]
@@ -96,7 +92,6 @@ class DebtListByCustomer(APIView):
         debts = CustomerDebt.objects.filter(customer=customer)
         serializer = CustomerDebtReadSerializer(debts, many=True)
         return Response(serializer.data)
-
 
 class OrdersDebtList(generics.ListAPIView):
     serializer_class = OrdersDebtListSerializer
