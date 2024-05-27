@@ -116,6 +116,13 @@ class Order(models.Model):
             num_of_papers = math.ceil(num_of_papers)
             # Perform the calculation
             total_paper_price = Decimal(num_of_papers) * Decimal(paper_price)
+            # add paper price to paper expenses
+            from accounting.models import PaperExpenses
+            PaperExpenses.objects.create(
+                paper=self.paper,
+                quantity=num_of_papers,
+                order=self
+            )
         else:
             total_paper_price = Decimal(0)
         
@@ -248,17 +255,3 @@ class Inventory(models.Model):
     def __str__(self) -> str:
         return self.name
 
-
-class InventoryExpense(models.Model):
-    item = models.ForeignKey(Inventory, on_delete=models.CASCADE)
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="inventory_expenses")
-    quantity = models.FloatField()
-    amount = models.DecimalField(decimal_places=2, max_digits=40, null=True, blank=True)
-    created_at = models.DateField(auto_now_add=True)
-
-    def save(self, *args, **kwargs):
-        self.amount = self.item.cost * self.quantity
-        super().save(*args, **kwargs)
-
-    def __str__(self):
-        return self.item.name

@@ -1,8 +1,8 @@
 from django.db.models import Sum
 from rest_framework import serializers
-from .models import ExpenseCategory, Expenses
+from .models import ExpenseCategory, Expenses, InventoryExpense
 from main.serializers import BranchSerializer, OrderReadSerializer, CustomerSerializer
-from main.models import Branch, PaymentMethod, OrderPayment, CustomerDebt, Customer, Order
+from main.models import Branch, PaymentMethod, OrderPayment, CustomerDebt, Customer, Order, Inventory
 from decimal import Decimal
 
 
@@ -101,3 +101,19 @@ class ExpensesReadSerializer(serializers.ModelSerializer):
         model = Expenses
         fields = '__all__'
 
+class InventorySerializer(serializers.ModelSerializer):
+    branch_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Inventory
+        fields = '__all__'
+    def get_branch_name(self, obj):
+        return Branch.objects.get(id=obj.branch.id).name
+
+class InventoryExpenseSerializer(serializers.ModelSerializer):
+    item = serializers.PrimaryKeyRelatedField(queryset=Inventory.objects.all())
+    order = serializers.PrimaryKeyRelatedField(queryset=Order.objects.all().values('id', 'name', 'final_price', 'date'))
+
+    class Meta:
+        model = InventoryExpense
+        fields = '__all__'

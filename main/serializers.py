@@ -68,7 +68,7 @@ class InventoryReadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Inventory
-        fields = ['id', 'name', 'cost', 'price', 'branch', 'available']
+        fields = ['id', 'name', 'cost', 'branch', 'available']
 
     def to_representation(self, instance):
         """

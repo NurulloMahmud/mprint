@@ -7,13 +7,14 @@ from rest_framework import generics
 
 from .models import ExpenseCategory, Expenses
 from .serializers import ExpenseCategorySerializer, PaymentMethodSerializer, OrderPaymentReadSerializer, OrderPaymentWriteSerializer \
-    , CustomerDebtReadSerializer, OrdersDebtListSerializer, ExpensesWriteSerializer, ExpensesReadSerializer
+    , CustomerDebtReadSerializer, OrdersDebtListSerializer, ExpensesWriteSerializer, ExpensesReadSerializer \
+    , InventorySerializer, InventoryExpenseSerializer
 from users.permissions import IsAdminRole, IsManagerRole
 from main.models import PaymentMethod, OrderPayment, Customer, CustomerDebt
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-from main.models import Order, CustomerDebt
+from main.models import Order, CustomerDebt, Inventory
 
 
 
@@ -101,3 +102,18 @@ class OrdersDebtList(generics.ListAPIView):
         orders_with_debt = Order.objects.filter(Q(debt__amount__gt=0)).distinct()
         return orders_with_debt
 
+class InventoryViewset(ModelViewSet):
+    queryset = Inventory.objects.all()
+    serializer_class = InventorySerializer
+    permission_classes = [IsManagerRole]
+
+    def get_queryset(self):
+        if self.request.user.role.lower() == 'manager':
+            if self.action in ['list', 'retrieve']:
+                return Inventory.objects.all().exclude('amount')
+        return Inventory.objects.all()
+
+class InventoryExpenseViewset(ModelViewSet):
+    queryset = Inventory.objects.all()
+    serializer_class = InventoryExpenseSerializer
+    permission_classes = [IsManagerRole]

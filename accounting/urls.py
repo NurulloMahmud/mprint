@@ -1,6 +1,7 @@
 from django.urls import path, include
 from .views import ExpenseCategoryViewSet, ExpensesModelViewset, OrderPaymentViewset, PaymentMethodViewSet \
-    , DebtListByCustomer, CustomerDebtListView, OrdersDebtList
+    , DebtListByCustomer, CustomerDebtListView, OrdersDebtList, \
+    InventoryViewset, InventoryExpenseViewset
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
@@ -8,6 +9,8 @@ router.register(r'expense_category', ExpenseCategoryViewSet, basename='expense_c
 router.register(r'expenses', ExpensesModelViewset, basename='expenses')
 router.register(r'payment_method', PaymentMethodViewSet, basename='payment_method')
 router.register(r'payment', OrderPaymentViewset, basename='payment')
+router.register(r'inventory', InventoryViewset, basename='inventory')
+router.register(r'inventory_expense', InventoryExpenseViewset, basename='inventory_expense')
 
 
 
