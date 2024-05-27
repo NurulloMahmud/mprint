@@ -107,5 +107,9 @@ class CompletedOrdersList(generics.ListAPIView):
     pagination_class = CustomPagination
 
     def get_queryset(self):
-        return Order.objects.filter(status__name="Completed")
+        start_date = self.request.query_params.get('start_date')
+        end_date = self.request.query_params.get('end_date')
+        if not start_date or not end_date:
+            return Order.objects.none()
+        return Order.objects.filter(status__name="Completed", date__range=[start_date, end_date]).order_by('-date')
 
