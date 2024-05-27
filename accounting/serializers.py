@@ -135,3 +135,7 @@ class PaperUsageSummarySerializer(serializers.ModelSerializer):
     def get_branch(self, obj):
         return obj.branch.name
 
+class InventoryExpenseSummarySerializer(serializers.Serializer):
+    item_name = serializers.CharField(source='item__name')
+    total_quantity = serializers.FloatField()
+    total_amount = serializers.DecimalField(max_digits=40, decimal_places=2)

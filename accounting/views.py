@@ -5,10 +5,10 @@ from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import generics
 
-from .models import ExpenseCategory, Expenses
+from .models import ExpenseCategory, Expenses, InventoryExpense
 from .serializers import ExpenseCategorySerializer, PaymentMethodSerializer, OrderPaymentReadSerializer, OrderPaymentWriteSerializer \
     , CustomerDebtReadSerializer, OrdersDebtListSerializer, ExpensesWriteSerializer, ExpensesReadSerializer \
-    , InventorySerializer, InventoryExpenseSerializer, PaperUsageSummarySerializer
+    , InventorySerializer, InventoryExpenseSerializer, PaperUsageSummarySerializer, InventoryExpenseSummarySerializer
 from users.permissions import IsAdminRole, IsManagerRole
 from main.models import PaymentMethod, OrderPayment, Customer, CustomerDebt
 from drf_yasg.utils import swagger_auto_schema
@@ -136,4 +136,21 @@ class PaperUsageSummaryView(generics.ListAPIView):
             quantity=Sum('paperexpenses__quantity'),
             total_cost=Sum(F('paperexpenses__quantity') * F('cost'), output_field=FloatField()),
             total_price=Sum(F('paperexpenses__quantity') * F('price'), output_field=FloatField())
+        )
+
+class InventoryExpenseSummaryView(generics.ListAPIView):
+    serializer_class = InventoryExpenseSummarySerializer
+
+    def get_queryset(self):
+        start_date = self.request.query_params.get('start_date')
+        end_date = self.request.query_params.get('end_date')
+
+        if not start_date or not end_date:
+            return InventoryExpense.objects.none()  # Return an empty queryset if dates are not provided
+
+        return InventoryExpense.objects.filter(
+            created_at__range=[start_date, end_date]
+        ).values('item__name').annotate(
+            total_quantity=Sum('quantity'),
+            total_amount=Sum(F('amount'))
         )
