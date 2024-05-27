@@ -1,4 +1,4 @@
-from django.db.models import Sum, Q
+from django.db.models import Sum, Q, FloatField, F
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -8,13 +8,13 @@ from rest_framework import generics
 from .models import ExpenseCategory, Expenses
 from .serializers import ExpenseCategorySerializer, PaymentMethodSerializer, OrderPaymentReadSerializer, OrderPaymentWriteSerializer \
     , CustomerDebtReadSerializer, OrdersDebtListSerializer, ExpensesWriteSerializer, ExpensesReadSerializer \
-    , InventorySerializer, InventoryExpenseSerializer
+    , InventorySerializer, InventoryExpenseSerializer, PaperUsageSummarySerializer
 from users.permissions import IsAdminRole, IsManagerRole
 from main.models import PaymentMethod, OrderPayment, Customer, CustomerDebt
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-from main.models import Order, CustomerDebt, Inventory
+from main.models import Order, CustomerDebt, Inventory, Paper
 
 
 
@@ -117,3 +117,23 @@ class InventoryExpenseViewset(ModelViewSet):
     queryset = Inventory.objects.all()
     serializer_class = InventoryExpenseSerializer
     permission_classes = [IsManagerRole]
+
+class PaperUsageSummaryView(generics.ListAPIView):
+    serializer_class = PaperUsageSummarySerializer
+    permission_classes = [IsAdminRole]
+
+    def get_queryset(self):
+        start_date = self.request.query_params.get('start_date')
+        end_date = self.request.query_params.get('end_date')
+
+        if not start_date or not end_date:
+            return Paper.objects.none()
+
+        # Aggregate data from PaperExpenses within the date range
+        return Paper.objects.filter(
+            paperexpenses__created_at__range=[start_date, end_date]
+        ).annotate(
+            quantity=Sum('paperexpenses__quantity'),
+            total_cost=Sum(F('paperexpenses__quantity') * F('cost'), output_field=FloatField()),
+            total_price=Sum(F('paperexpenses__quantity') * F('price'), output_field=FloatField())
+        )

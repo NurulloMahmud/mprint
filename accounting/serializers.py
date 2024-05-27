@@ -2,7 +2,7 @@ from django.db.models import Sum
 from rest_framework import serializers
 from .models import ExpenseCategory, Expenses, InventoryExpense
 from main.serializers import BranchSerializer, OrderReadSerializer, CustomerSerializer
-from main.models import Branch, PaymentMethod, OrderPayment, CustomerDebt, Customer, Order, Inventory
+from main.models import Branch, PaymentMethod, OrderPayment, CustomerDebt, Customer, Order, Inventory, Paper
 from decimal import Decimal
 
 
@@ -117,3 +117,21 @@ class InventoryExpenseSerializer(serializers.ModelSerializer):
     class Meta:
         model = InventoryExpense
         fields = '__all__'
+
+class PaperUsageSummarySerializer(serializers.ModelSerializer):
+    paper_type = serializers.SerializerMethodField()
+    branch = serializers.SerializerMethodField()
+    quantity = serializers.IntegerField()
+    total_cost = serializers.DecimalField(max_digits=40, decimal_places=2)
+    total_price = serializers.DecimalField(max_digits=40, decimal_places=2)
+    
+    class Meta:
+        model = Paper
+        fields = ['id', 'paper_type', 'grammaj', 'branch', 'quantity', 'total_cost', 'total_price']
+
+    def get_paper_type(self, obj):
+        return obj.paper_type.name
+
+    def get_branch(self, obj):
+        return obj.branch.name
+

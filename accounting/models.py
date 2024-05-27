@@ -9,7 +9,6 @@ class ExpenseCategory(models.Model):
     def __str__(self):
         return self.name
 
-
 class Expenses(models.Model):
     date = models.DateField(auto_now_add=True)
     name = models.TextField()
@@ -23,7 +22,6 @@ class Expenses(models.Model):
     class Meta:
         ordering = ['-date']
 
-
 class Debt(models.Model):
     created_at = models.DateField(auto_now_add=True)
     amount = models.DecimalField(decimal_places=2, max_digits=40)
@@ -31,7 +29,6 @@ class Debt(models.Model):
 
     def __str__(self):
         return self.note
-
 
 class InventoryExpense(models.Model):
     item = models.ForeignKey(Inventory, on_delete=models.CASCADE)
@@ -46,7 +43,6 @@ class InventoryExpense(models.Model):
 
     def __str__(self):
         return self.item.name
-
 
 class PaperExpenses(models.Model):
     created_at = models.DateField(auto_now_add=True)
