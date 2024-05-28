@@ -8,10 +8,11 @@ from rest_framework.permissions import IsAuthenticated
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-from main.models import Branch, Service, Order, Status
+from main.models import Branch, Service, Order, Status, Inventory
 from users.permissions import IsAdminRole, IsManagerRole, IsPrinterRole, IsFactoryRole
 
-from .serializers import OrderUpdateSerializer, ActiveOrdersSerializer
+from .serializers import OrderUpdateSerializer, ActiveOrdersSerializer \
+    , InventoryReadAdminSerializer, InventoryReadManagerSerializer
 from main.serializers import OrderReadSerializer
 from main.pagination import CustomPagination
 
@@ -116,3 +117,16 @@ class ActiveOrdersList(generics.ListAPIView):
     def get_queryset(self):
         return Order.objects.all().exclude(status__name="Completed").values('id', 'name', 'final_price', 'date')
 
+class InventoryListAPIView(generics.ListAPIView):
+    queryset = Inventory.objects.all()
+    serializer_class = InventoryReadAdminSerializer
+    permission_classes = [IsManagerRole]
+
+    def get_queryset(self):
+        if self.request.user.role.lower() == "manager":
+            return Inventory.objects.filter(branch=self.request.user.branch)
+        return Inventory.objects.all()
+    def get_serializer_class(self):
+        if self.request.user.role.lower() == "manager":
+            return InventoryReadManagerSerializer
+        return InventoryReadAdminSerializer

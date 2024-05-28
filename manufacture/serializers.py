@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from main.models import Branch, Service, Order
+from main.models import Branch, Service, Order, Inventory
+from main.serializers import BranchSerializer
 
 
 class OrderUpdateSerializer(serializers.ModelSerializer):
@@ -24,3 +25,16 @@ class ActiveOrdersSerializer(serializers.ModelSerializer):
         model = Order
         fields = ['id', 'name', 'final_price', 'date']
 
+class InventoryReadManagerSerializer(serializers.ModelSerializer):
+    branch = BranchSerializer(read_only=True)
+
+    class Meta:
+        model = Inventory
+        fields = ['id', 'name', 'available', 'branch']
+
+class InventoryReadAdminSerializer(serializers.ModelSerializer):
+    branch = BranchSerializer(read_only=True)
+
+    class Meta:
+        model = Inventory
+        fields = ['id', 'name', 'cost', 'available', 'branch']
