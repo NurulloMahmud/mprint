@@ -252,7 +252,7 @@ class Inventory(models.Model):
     total_price = models.DecimalField(decimal_places=2, max_digits=40, default=0)
 
     def save(self, *args, **kwargs):
-        self.total_price = self.cost * self.available
+        self.total_price = self.cost * int(self.available or 0)
         super().save(*args, **kwargs)
 
     def __str__(self) -> str:

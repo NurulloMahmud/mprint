@@ -38,3 +38,9 @@ class InventoryReadAdminSerializer(serializers.ModelSerializer):
     class Meta:
         model = Inventory
         fields = ['id', 'name', 'cost', 'available', 'branch']
+
+class InventoryUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Inventory
+        fields = ['cost', 'available']
+

@@ -41,6 +41,8 @@ class InventoryExpense(models.Model):
     def save(self, *args, **kwargs):
         self.amount = self.item.cost * int(self.quantity or 0)
         self.branch = self.item.branch
+        self.item.available -= self.quantity
+        self.item.save()
         super().save(*args, **kwargs)
 
     def __str__(self):

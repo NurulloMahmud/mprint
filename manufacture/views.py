@@ -12,7 +12,8 @@ from main.models import Branch, Service, Order, Status, Inventory
 from users.permissions import IsAdminRole, IsManagerRole, IsPrinterRole, IsFactoryRole
 
 from .serializers import OrderUpdateSerializer, ActiveOrdersSerializer \
-    , InventoryReadAdminSerializer, InventoryReadManagerSerializer
+    , InventoryReadAdminSerializer, InventoryReadManagerSerializer \
+    , InventoryUpdateSerializer
 from main.serializers import OrderReadSerializer
 from main.pagination import CustomPagination
 
@@ -130,3 +131,8 @@ class InventoryListAPIView(generics.ListAPIView):
         if self.request.user.role.lower() == "manager":
             return InventoryReadManagerSerializer
         return InventoryReadAdminSerializer
+
+class InventoryUpdateSerializer(generics.UpdateAPIView):
+    queryset = Inventory.objects.all()
+    serializer_class = InventoryUpdateSerializer
+    permission_classes = [IsAdminRole]
