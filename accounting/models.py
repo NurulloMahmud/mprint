@@ -39,7 +39,7 @@ class InventoryExpense(models.Model):
     branch = models.ForeignKey('main.Branch', on_delete=models.CASCADE, null=True, blank=True)
 
     def save(self, *args, **kwargs):
-        self.amount = self.item.cost * self.quantity
+        self.amount = self.item.cost * int(self.quantity or 0)
         self.branch = self.item.branch
         super().save(*args, **kwargs)
 

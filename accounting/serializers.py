@@ -142,9 +142,8 @@ class InventoryExpenseSummarySerializer(serializers.Serializer):
 
 class InventoryExpenseCreateSerializer(serializers.ModelSerializer):
     item = serializers.PrimaryKeyRelatedField(queryset=Inventory.objects.all())
-    branch = serializers.PrimaryKeyRelatedField(queryset=Branch.objects.all())
     order = serializers.PrimaryKeyRelatedField(queryset=Order.objects.all())
 
     class Meta:
         model = InventoryExpense
-        fields = '__all__'
+        fields = ['item', 'order', 'quantity']
