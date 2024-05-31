@@ -107,23 +107,30 @@ class Order(models.Model):
         total_service_price = Decimal(0)
         
         # Calculate paper price
-        if self.lists_per_paper and self.paper and self.paper.price:
-            num_of_lists = Decimal(int(self.num_of_lists or 0))
-            possible_defect_list = Decimal(int(self.possible_defect_list or 0))
-            lists_per_paper = Decimal(int(self.lists_per_paper))
-            paper_price = Decimal(self.paper.price)
-            num_of_papers = ((num_of_lists + possible_defect_list) / lists_per_paper)
-            num_of_papers = math.ceil(num_of_papers)
-            # Perform the calculation
-            total_paper_price = Decimal(num_of_papers) * Decimal(paper_price)
-            # subtract num of papers
-            self.paper.available_qty -= num_of_papers
+        if self.products_qty and self.paper and self.paper.price \
+            and self.num_of_product_per_list and self.lists_per_paper:
+            total_num_of_lists = int(self.products_qty / self.num_of_product_per_list) + int(self.possible_defect_list or 0)
+            num_of_lists_used = self.products_qty / self.num_of_product_per_list
+            num_of_lists_used = math.ceil(num_of_lists_used)
+            num_of_lists_used = int(num_of_lists_used)
+            total_num_of_lists = int(total_num_of_lists)
+            num_of_papers_used = total_num_of_lists / int(self.lists_per_paper)
+            num_of_papers_used = math.ceil(num_of_papers_used)
+
+            # add the paper price to total and calculate number of lists used
+            total = num_of_papers_used * Decimal(self.paper.price)
+            total_paper_price = Decimal(total)
+            self.num_of_lists = num_of_lists_used
+
+            # minus number of papers from paper's quantity
+            self.paper.available_qty -= num_of_papers_used
             self.paper.save()
+
             # add paper price to paper expenses
             from accounting.models import PaperExpenses
             PaperExpenses.objects.create(
                 paper=self.paper,
-                quantity=num_of_papers,
+                quantity=num_of_papers_used,
                 order=self
             )
         else:
