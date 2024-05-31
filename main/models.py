@@ -121,6 +121,8 @@ class Order(models.Model):
             total = num_of_papers_used * Decimal(self.paper.price)
             total_paper_price = Decimal(total)
             self.num_of_lists = num_of_lists_used
+            self.total_price = total_paper_price
+            self.save()
 
             # minus number of papers from paper's quantity
             self.paper.available_qty -= num_of_papers_used
@@ -181,7 +183,7 @@ class ServiceOrder(models.Model):
         if not self.pk:  # If the order is being created (not updated)
             if self.service.price_per_sqr is not None:
                 self.total_price = Decimal(self.order.total_sqr_meter) * Decimal(self.service.price_per_sqr)
-            else:
+            elif self.service.price_per_qty is not None:
                 self.total_price = self.order.num_of_lists * self.service.price_per_qty
             
             if self.total_price < self.service.minimum_price:
