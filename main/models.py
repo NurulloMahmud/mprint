@@ -109,8 +109,8 @@ class Order(models.Model):
         # Calculate paper price
         if self.products_qty and self.paper and self.paper.price \
             and self.num_of_product_per_list and self.lists_per_paper:
-            total_num_of_lists = int(self.products_qty / self.num_of_product_per_list) + int(self.possible_defect_list or 0)
-            num_of_lists_used = self.products_qty / self.num_of_product_per_list
+            total_num_of_lists = int(self.products_qty) / int(self.num_of_product_per_list) + int(self.possible_defect_list or 0)
+            num_of_lists_used = int(self.products_qty) / int(self.num_of_product_per_list)
             num_of_lists_used = math.ceil(num_of_lists_used)
             num_of_lists_used = int(num_of_lists_used)
             total_num_of_lists = int(total_num_of_lists)
