@@ -183,7 +183,7 @@ class ServiceOrder(models.Model):
         if not self.pk:  # If the order is being created (not updated)
             if self.service.price_per_sqr is not None:
                 self.total_price = Decimal(self.order.total_sqr_meter) * Decimal(self.service.price_per_sqr)
-            elif self.service.price_per_qty is not None:
+            if self.service.price_per_qty is not None:
                 self.total_price = self.order.num_of_lists * self.service.price_per_qty
             
             if self.total_price < self.service.minimum_price:
