@@ -94,7 +94,7 @@ class OrderListByUser(generics.ListAPIView):
         while other users get orders filtered by their branch and role.
         """
         user = self.request.user
-        if user.role.lower() == "admin":
+        if user.role.lower() in ["admin", "manager"]:
             return Order.objects.all().order_by('-date').exclude(status__name="Completed")
         else:
             return Order.objects.filter(branch=user.branch, status__name=user.role.capitalize()).order_by('-date')
