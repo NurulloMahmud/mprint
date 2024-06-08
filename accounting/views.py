@@ -166,10 +166,19 @@ class OrderDetailView(generics.RetrieveAPIView):
     permission_classes = [IsManagerRole]
     queryset = Order.objects.all()
 
-class OrderDebtByCustomerView(generics.ListAPIView):
+class OrderDebtListView(generics.ListAPIView):
     serializer_class = CustomerDebtListSerializer
     permission_classes = [IsManagerRole]
     queryset = CustomerDebt.objects.all()
 
     def get_queryset(self):
         return CustomerDebt.objects.filter(amount__gt=0).order_by('customer__name', '-amount')
+
+class OrderDebtByCustomerListView(APIView):
+    permission_classes = [IsManagerRole]
+
+    def get(self, request, pk):
+        customer = Customer.objects.get(id=pk)
+        debt = CustomerDebt.objects.filter(customer=customer, amount__gt=0)
+        serializer = CustomerDebtReadSerializer(debt)
+        return Response(serializer.data)

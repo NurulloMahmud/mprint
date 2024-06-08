@@ -3,7 +3,7 @@ from .views import ExpenseCategoryViewSet, ExpensesModelViewset, OrderPaymentVie
     , DebtListByCustomer, CustomerDebtListView, OrdersDebtList, \
     InventoryViewset, InventoryExpenseViewset, PaperUsageSummaryView \
     , InventoryExpenseSummaryView, InventoryExpenseCreateView, \
-    OrderDetailView, OrderDebtByCustomerView
+    OrderDetailView, OrderDebtListView, OrderDebtByCustomerListView
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
@@ -25,5 +25,6 @@ urlpatterns = [
     path('inventory-expense-summary/', InventoryExpenseSummaryView.as_view()),
     path('inventory-expense-create/', InventoryExpenseCreateView.as_view()),
     path('order/<int:pk>/', OrderDetailView.as_view()),
-    path('order/debt/list/', OrderDebtByCustomerView.as_view()),
+    path('order/debt/list/', OrderDebtListView.as_view()),
+    path('order/debt/customer/<int:pk>/', OrderDebtByCustomerListView.as_view()),
 ]
