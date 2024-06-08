@@ -2,7 +2,8 @@ from django.urls import path, include
 from .views import ExpenseCategoryViewSet, ExpensesModelViewset, OrderPaymentViewset, PaymentMethodViewSet \
     , DebtListByCustomer, CustomerDebtListView, OrdersDebtList, \
     InventoryViewset, InventoryExpenseViewset, PaperUsageSummaryView \
-    , InventoryExpenseSummaryView, InventoryExpenseCreateView
+    , InventoryExpenseSummaryView, InventoryExpenseCreateView, \
+    OrderDetailView, OrderDebtByCustomerView
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
@@ -23,4 +24,6 @@ urlpatterns = [
     path('paper-usage-summary/', PaperUsageSummaryView.as_view()),
     path('inventory-expense-summary/', InventoryExpenseSummaryView.as_view()),
     path('inventory-expense-create/', InventoryExpenseCreateView.as_view()),
+    path('order/<int:pk>/', OrderDetailView.as_view()),
+    path('order/debt/<int:pk>/', OrderDebtByCustomerView.as_view()),
 ]

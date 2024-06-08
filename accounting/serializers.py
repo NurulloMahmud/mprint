@@ -1,9 +1,10 @@
 from django.db.models import Sum
 from rest_framework import serializers
 from .models import ExpenseCategory, Expenses, InventoryExpense
-from main.serializers import BranchSerializer, OrderReadSerializer, CustomerSerializer
+from main.serializers import BranchSerializer, OrderReadSerializer, CustomerSerializer, PaperReadSerializer
 from main.models import Branch, PaymentMethod, OrderPayment, CustomerDebt, Customer, Order, Inventory, Paper
 from decimal import Decimal
+
 
 
 class ExpenseCategorySerializer(serializers.ModelSerializer):
@@ -147,3 +148,21 @@ class InventoryExpenseCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = InventoryExpense
         fields = ['item', 'order', 'quantity']
+
+class CustomerDebtListSerializer(serializers.ModelSerializer):
+    customer = CustomerSerializer()
+    order = serializers.SerializerMethodField()
+    class Meta:
+        model = CustomerDebt
+        fields = '__all__'
+
+    def get_order(self, obj):
+        order = Order.objects.filter(customer=obj.customer).values('id', 'name', 'final_price', 'date')
+        return order
+
+class OrderDetailSerializer(serializers.ModelSerializer):
+    customer = CustomerSerializer()
+    paper = PaperReadSerializer()
+    class Meta:
+        model = Order
+        fields = '__all__'

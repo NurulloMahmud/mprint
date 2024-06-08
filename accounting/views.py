@@ -9,7 +9,7 @@ from .models import ExpenseCategory, Expenses, InventoryExpense
 from .serializers import ExpenseCategorySerializer, PaymentMethodSerializer, OrderPaymentReadSerializer, OrderPaymentWriteSerializer \
     , CustomerDebtReadSerializer, OrdersDebtListSerializer, ExpensesWriteSerializer, ExpensesReadSerializer \
     , InventorySerializer, InventoryExpenseSerializer, PaperUsageSummarySerializer, InventoryExpenseSummarySerializer, \
-    InventoryExpenseCreateSerializer
+    InventoryExpenseCreateSerializer, CustomerDebtListSerializer, OrderDetailSerializer
 from users.permissions import IsAdminRole, IsManagerRole
 from main.models import PaymentMethod, OrderPayment, Customer, CustomerDebt
 from drf_yasg.utils import swagger_auto_schema
@@ -161,3 +161,15 @@ class InventoryExpenseCreateView(generics.CreateAPIView):
     permission_classes = [IsManagerRole]
     queryset = InventoryExpense.objects.all()
 
+class OrderDetailView(generics.RetrieveAPIView):
+    serializer_class = OrderDetailSerializer
+    permission_classes = [IsManagerRole]
+    queryset = Order.objects.all()
+
+class OrderDebtByCustomerView(generics.ListAPIView):
+    serializer_class = CustomerDebtListSerializer
+    permission_classes = [IsManagerRole]
+    queryset = CustomerDebt.objects.all()
+
+    def get_queryset(self):
+        return CustomerDebt.objects.filter(amount__gt=0).order_by('customer__name', '-amount')
