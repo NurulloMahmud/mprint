@@ -1,7 +1,8 @@
 from django.db.models import Sum
 from rest_framework import serializers
 from .models import ExpenseCategory, Expenses, InventoryExpense
-from main.serializers import BranchSerializer, OrderReadSerializer, CustomerSerializer, PaperReadSerializer
+from main.serializers import BranchSerializer, OrderReadSerializer, CustomerSerializer, PaperReadSerializer, \
+    ServiceOrderSerializer, OrderPicsSerializer
 from main.models import Branch, PaymentMethod, OrderPayment, CustomerDebt, Customer, Order, Inventory, Paper
 from decimal import Decimal
 
@@ -163,6 +164,8 @@ class CustomerDebtListSerializer(serializers.ModelSerializer):
 class OrderDetailSerializer(serializers.ModelSerializer):
     customer = CustomerSerializer()
     paper = PaperReadSerializer()
+    services = ServiceOrderSerializer(many=True, read_only=True)
+    pics = OrderPicsSerializer(many=True, read_only=True)
     class Meta:
         model = Order
         fields = '__all__'
