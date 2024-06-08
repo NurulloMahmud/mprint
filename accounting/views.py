@@ -179,6 +179,6 @@ class OrderDebtByCustomerListView(APIView):
 
     def get(self, request, pk):
         customer = Customer.objects.get(id=pk)
-        debt = CustomerDebt.objects.filter(customer=customer, amount__gt=0)
+        debt = CustomerDebt.objects.filter(customer=customer).order_by('-amount', '-order__date')
         serializer = CustomerDebtListSerializer(debt, many=True)
         return Response(serializer.data)
