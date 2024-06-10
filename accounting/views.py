@@ -91,7 +91,7 @@ class DebtListByCustomer(APIView):
     )
     def get(self, request, pk):
         customer = Customer.objects.get(id=pk)
-        debts = CustomerDebt.objects.filter(customer=customer)
+        debts = CustomerDebt.objects.filter(customer__id=pk)
         serializer = CustomerDebtReadSerializer(debts, many=True)
         return Response(serializer.data)
 

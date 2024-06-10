@@ -68,11 +68,11 @@ class CustomerDebtReadSerializer(serializers.ModelSerializer):
 
     def get_debt(self, obj):
         if CustomerDebt.objects.filter(customer=obj).exists():
-            debt_amount = CustomerDebt.objects.filter(customer__id=obj.id).aggregate(Sum('amount'))['amount__sum']
+            debt_amount = CustomerDebt.objects.filter(customer__id=obj).aggregate(Sum('amount'))['amount__sum']
             return Decimal(debt_amount) if debt_amount is not None else Decimal(0)
         return Decimal(0)
     def get_orders(self, obj):
-        return Order.objects.filter(customer__id=obj.id).count()
+        return Order.objects.filter(customer=obj).count()
     
 class OrdersDebtListSerializer(serializers.ModelSerializer):
     customer = serializers.SerializerMethodField()
