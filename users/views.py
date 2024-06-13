@@ -74,3 +74,11 @@ class UserDetails(APIView):
         serializer = UserListSerializer(user)
         return Response(serializer.data)
 
+
+
+#   customizing simple jwt to return user's role
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .serializers import MyTokenObtainPairSerializer
+
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
