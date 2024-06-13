@@ -4,7 +4,7 @@ from .views import (
     OrderStatusAutoChange, OrderStatusChange,
     OrderListByStatusAPIView, OrderListByUser,
     CompletedOrdersList, ActiveOrdersList,
-    InventoryListAPIView, InventoryUpdateSerializer
+    InventoryListAPIView, InventoryUpdateView
 )
 
 
@@ -17,5 +17,5 @@ urlpatterns = [
     path('orders/completed/list/', CompletedOrdersList.as_view()),
     path('orders/active/list/', ActiveOrdersList.as_view()),
     path('inventory/list/', InventoryListAPIView.as_view()),
-    path('inventory/update/<int:pk>/', InventoryUpdateSerializer.as_view()),
+    path('inventory/update/<int:pk>/', InventoryUpdateView.as_view()),
 ]

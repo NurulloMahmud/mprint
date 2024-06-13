@@ -125,14 +125,15 @@ class InventoryListAPIView(generics.ListAPIView):
 
     def get_queryset(self):
         if self.request.user.role.lower() == "manager":
-            return Inventory.objects.filter(branch=self.request.user.branch)
-        return Inventory.objects.all()
+            return Inventory.objects.filter(branch=self.request.user.branch).order_by('id')
+        return Inventory.objects.all().order_by('id')
+    
     def get_serializer_class(self):
         if self.request.user.role.lower() == "manager":
             return InventoryReadManagerSerializer
         return InventoryReadAdminSerializer
 
-class InventoryUpdateSerializer(generics.UpdateAPIView):
+class InventoryUpdateView(generics.UpdateAPIView):
     queryset = Inventory.objects.all()
     serializer_class = InventoryUpdateSerializer
     permission_classes = [IsAdminRole]
