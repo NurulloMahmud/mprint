@@ -56,3 +56,8 @@ class PechatUserJobSerializer(serializers.ModelSerializer):
         return obj.paper.paper_type.name
     def get_grammaj(self, obj):
         return obj.paper.grammaj
+
+class OrderListByUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = ['id', 'name', 'final_price', 'date']

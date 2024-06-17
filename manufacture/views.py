@@ -98,11 +98,6 @@ class OrderListByUser(generics.ListAPIView):
             return Order.objects.all().order_by('-date').exclude(status__name="Completed")
         else:
             return Order.objects.filter(branch=user.branch, status__name=user.role.capitalize()).order_by('-date')
-    
-    def get_serializer_class(self):
-        if self.request.user.role.lower() == "pechat":
-            return PechatUserJobSerializer
-        return OrderReadSerializer
 
 class CompletedOrdersList(generics.ListAPIView):
     serializer_class = OrderReadSerializer
