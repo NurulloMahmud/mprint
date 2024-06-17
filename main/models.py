@@ -81,6 +81,8 @@ class Order(models.Model):
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
     num_of_product_per_list = models.IntegerField(null=True, blank=True)
     lists_per_paper = models.IntegerField(null=True, blank=True)
+    special_service_name = models.CharField(max_length=100, null=True, blank=True)
+    special_service_amount = models.DecimalField(decimal_places=2, max_digits=40, null=True, blank=True, default=0)
 
     def save(self, *args, **kwargs):
         if not self.pk:  # If the order is being created (not updated)
@@ -150,6 +152,7 @@ class Order(models.Model):
         self.total_price = total_service_price + total_paper_price
         self.price_per_list = self.final_price / int(self.num_of_lists) if self.num_of_lists else Decimal(0)
         self.price_per_product = self.final_price / int(self.products_qty) if self.products_qty else Decimal(0)
+        self.total_price += self.special_service_amount
         self.save()
 
     def __str__(self):

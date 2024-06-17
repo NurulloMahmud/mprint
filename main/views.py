@@ -205,7 +205,9 @@ class OrderCreateView(APIView):
                     status=status_obj,
                     branch=branch_obj,
                     num_of_product_per_list=data['num_of_product_per_list'],
-                    lists_per_paper=data['num_of_lists_per_paper']
+                    lists_per_paper=data['num_of_lists_per_paper'],
+                    special_service_name=data.get('special_service_name', None),
+                    special_service_amount=data.get('special_service_amount', 0),
                 )
 
                 order.num_of_lists = (int(order.products_qty) // int(order.num_of_product_per_list)) + int(order.possible_defect_list)
