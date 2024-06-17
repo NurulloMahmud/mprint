@@ -73,7 +73,7 @@ class OrderListByStatusAPIView(generics.ListAPIView):
 
 class OrderListByUser(generics.ListAPIView):
     serializer_class = OrderReadSerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     pagination_class = CustomPagination
 
     @swagger_auto_schema(
