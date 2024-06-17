@@ -18,7 +18,8 @@ from .models import (
     PaperType, Inventory,
     Paper, Service, CustomerDebt,
     OrderPayment, ServiceOrder,
-    OrderPics, PaymentMethod
+    OrderPics, PaymentMethod,
+    OrderManager
 )
 
 from .serializers import (
@@ -209,6 +210,8 @@ class OrderCreateView(APIView):
                     special_service_name=data.get('special_service_name', None),
                     special_service_amount=data.get('special_service_amount', 0),
                 )
+
+                OrderManager.objects.create(order=order, manager=request.user)
 
                 order.num_of_lists = (int(order.products_qty) // int(order.num_of_product_per_list)) + int(order.possible_defect_list)
 

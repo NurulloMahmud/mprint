@@ -174,4 +174,3 @@ class OrderServiceByUser(APIView):
             serializer = ServiceOrderByUserSerializer(services, many=True)
 
             return Response(serializer.data)
-        

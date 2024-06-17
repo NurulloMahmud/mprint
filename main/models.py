@@ -270,3 +270,11 @@ class Inventory(models.Model):
     def __str__(self) -> str:
         return self.name
 
+
+class OrderManager(models.Manager):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="order_manager")
+    manager = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="order_manager")
+    created_at = models.DateField(auto_now_add=True)
+
+    def __str__(self) -> str:
+        return f"{self.order.name} >>> {self.manager.username}"
