@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404
+from django.db.models import Q
 
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -8,12 +9,12 @@ from rest_framework.permissions import IsAuthenticated
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-from main.models import Branch, Service, Order, Status, Inventory
+from main.models import Branch, Service, Order, Status, Inventory, ServiceOrder
 from users.permissions import IsAdminRole, IsManagerRole, IsPrinterRole, IsFactoryRole
 
 from .serializers import OrderUpdateSerializer, ActiveOrdersSerializer \
     , InventoryReadAdminSerializer, InventoryReadManagerSerializer \
-    , InventoryUpdateSerializer, PechatUserJobSerializer
+    , InventoryUpdateSerializer, PechatUserJobSerializer, ServiceOrderByUserSerializer
 from main.serializers import OrderReadSerializer
 from main.pagination import CustomPagination
 
@@ -137,3 +138,40 @@ class InventoryUpdateView(generics.UpdateAPIView):
     queryset = Inventory.objects.all()
     serializer_class = InventoryUpdateSerializer
     permission_classes = [IsAdminRole]
+
+class OrderServiceByUser(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, order_id):
+        order_obj = get_object_or_404(Order, id=order_id)
+        if request.user.role.lower() == "pechat":
+            services = ServiceOrder.objects.filter(
+                order=order_obj,
+                service__name__icontains="pechat",
+                order__branch=request.user.branch,
+                order__status__name="Pechat",
+            ).order_by('-order__date')
+
+            serializer = ServiceOrderByUserSerializer(services, many=True)
+
+            return Response(serializer.data)
+        elif request.user.role.lower() == "qayta ishlash":
+            services = ServiceOrder.objects.filter(
+                Q(order=order_obj) &
+                ~Q(service__name__icontains="pechat") &
+                Q(order__branch=request.user.branch) &
+                Q(order__status__name="Qayta ishlash")
+            ).order_by('-order__date')
+
+            serializer = ServiceOrderByUserSerializer(services, many=True)
+
+            return Response(serializer.data)
+        else:
+            services = ServiceOrder.objects.filter(
+                order=order_obj
+            ).order_by('-order__date')
+
+            serializer = ServiceOrderByUserSerializer(services, many=True)
+
+            return Response(serializer.data)
+        

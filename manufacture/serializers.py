@@ -61,3 +61,14 @@ class OrderListByUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ['id', 'name', 'final_price', 'date']
+
+class ServiceNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Service
+        fields = ['name']
+
+class ServiceOrderByUserSerializer(serializers.ModelSerializer):
+    service = ServiceNameSerializer(read_only=True)
+    class Meta:
+        model = ServiceOrder
+        fields = ['id', 'service']
