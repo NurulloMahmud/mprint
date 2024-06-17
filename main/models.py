@@ -271,7 +271,7 @@ class Inventory(models.Model):
         return self.name
 
 
-class OrderManager(models.Manager):
+class OrderManager(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="order_manager")
     manager = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="order_manager")
     created_at = models.DateField(auto_now_add=True)
