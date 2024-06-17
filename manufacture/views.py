@@ -13,7 +13,7 @@ from users.permissions import IsAdminRole, IsManagerRole, IsPrinterRole, IsFacto
 
 from .serializers import OrderUpdateSerializer, ActiveOrdersSerializer \
     , InventoryReadAdminSerializer, InventoryReadManagerSerializer \
-    , InventoryUpdateSerializer
+    , InventoryUpdateSerializer, PechatUserJobSerializer
 from main.serializers import OrderReadSerializer
 from main.pagination import CustomPagination
 
@@ -73,7 +73,7 @@ class OrderListByStatusAPIView(generics.ListAPIView):
 
 class OrderListByUser(generics.ListAPIView):
     serializer_class = OrderReadSerializer
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     pagination_class = CustomPagination
 
     @swagger_auto_schema(
@@ -96,13 +96,13 @@ class OrderListByUser(generics.ListAPIView):
         user = self.request.user
         if user.role.lower() in ["admin", "manager"]:
             return Order.objects.all().order_by('-date').exclude(status__name="Completed")
-        elif user.role.lower() == "pechat":
-            return Order.objects.filter(
-                branch=user.branch, status__name=user.role.capitalize(),
-                services__service__name__icontains="pechat"
-            ).order_by('-date')
         else:
             return Order.objects.filter(branch=user.branch, status__name=user.role.capitalize()).order_by('-date')
+    
+    def get_serializer_class(self):
+        if self.request.user.role.lower() == "pechat":
+            return PechatUserJobSerializer
+        return OrderReadSerializer
 
 class CompletedOrdersList(generics.ListAPIView):
     serializer_class = OrderReadSerializer

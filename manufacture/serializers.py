@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from main.models import Branch, Service, Order, Inventory
+from main.models import Branch, Service, Order, Inventory, ServiceOrder
 from main.serializers import BranchSerializer
 
 
@@ -44,3 +44,15 @@ class InventoryUpdateSerializer(serializers.ModelSerializer):
         model = Inventory
         fields = ['cost', 'available']
 
+class PechatUserJobSerializer(serializers.ModelSerializer):
+    services = serializers.SerializerMethodField()
+    class Meta:
+        model = Order
+        fields = ['id', 'number_of_lists', 'paper_type', 'grammaj', 'services']
+
+    def get_services(self, obj):
+        return ServiceOrder.objects.filter(order=obj, service__name__icontains="pechat")
+    def get_paper_type(self, obj):
+        return obj.paper.paper_type.name
+    def get_grammaj(self, obj):
+        return obj.paper.grammaj
