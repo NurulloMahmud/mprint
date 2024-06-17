@@ -101,6 +101,8 @@ class OrderListByUser(generics.ListAPIView):
                 branch=user.branch, status__name=user.role.capitalize(),
                 services__service__name__icontains="pechat"
             ).order_by('-date')
+        else:
+            return Order.objects.filter(branch=user.branch, status__name=user.role.capitalize()).order_by('-date')
 
 class CompletedOrdersList(generics.ListAPIView):
     serializer_class = OrderReadSerializer
