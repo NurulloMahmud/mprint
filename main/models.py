@@ -152,7 +152,7 @@ class Order(models.Model):
         self.total_price = total_service_price + total_paper_price
         self.price_per_list = self.final_price / int(self.num_of_lists) if self.num_of_lists else Decimal(0)
         self.price_per_product = self.final_price / int(self.products_qty) if self.products_qty else Decimal(0)
-        self.total_price += self.special_service_amount
+        self.total_price += Decimal(self.special_service_amount)
         self.save()
 
     def __str__(self):
