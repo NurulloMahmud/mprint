@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'main',
     'manufacture',
     'accounting',
+    'analytics',
 
     # 3rd party
     'rest_framework',
