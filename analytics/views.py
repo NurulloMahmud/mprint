@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.db.models import Sum
+from django.db.models import Sum, Count, F
 from rest_framework import status
 
 from accounting.models import (
@@ -108,3 +108,39 @@ class InventoryExpenseSummaryView(APIView):
         }
         
         return Response(summary_data, status=status.HTTP_200_OK)
+
+class ManagerOrderSummaryView(APIView):
+
+    def get(self, request):
+        # Retrieve the start and end date from the request
+        start_date = request.query_params.get('start_date')
+        end_date = request.query_params.get('end_date')
+
+        # Validate date inputs
+        if not start_date or not end_date:
+            return Response({'error': 'Please provide both start_date and end_date parameters'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+            end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
+        except ValueError:
+            return Response({'error': 'Invalid date format. Use YYYY-MM-DD.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Aggregate the data
+        summary = OrderManager.objects.filter(created_at__range=(start_date, end_date)) \
+            .values(manager=F('manager__username')) \
+            .annotate(order_count=Count('order'), total_amount=Sum('order__final_price')) \
+            .order_by('manager')
+
+        # Format the data for response
+        summary_data = [
+            {
+                'manager': entry['manager'],
+                'order_count': entry['order_count'],
+                'total_amount': entry['total_amount']
+            }
+            for entry in summary
+        ]
+        
+        return Response(summary_data, status=status.HTTP_200_OK)
+
