@@ -197,8 +197,8 @@ class TotalIncomeSummaryView(APIView):
             return Response({'error': 'Invalid date format. Use YYYY-MM-DD.'}, status=status.HTTP_400_BAD_REQUEST)
         
         # Aggregate the total income within the date range
-        total_income = Order.objects.filter(date__range=(start_date, end_date)) \
-            .aggregate(total_income=Sum('final_price'))['total_income'] or 0
+        total_income = OrderPayment.objects.filter(date__range=(start_date, end_date)) \
+            .aggregate(total_income=Sum('amount'))['total_income'] or 0
 
         # Prepare the data
         summary_data = {
