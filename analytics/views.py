@@ -135,7 +135,7 @@ class ManagerOrderSummaryView(APIView):
         # Format the data for response
         summary_data = [
             {
-                'manager': entry['manager'],
+                'manager': entry['manager_username'],
                 'order_count': entry['order_count'],
                 'total_amount': entry['total_amount']
             }
