@@ -7,7 +7,8 @@ from accounting.models import (
     PaperExpenses, Expenses, ExpenseCategory, InventoryExpense
 )
 from main.models import (
-    OrderManager, Order
+    OrderManager, Order,
+    OrderPayment,
 )
 from users.permissions import IsAdminRole
 
@@ -110,7 +111,7 @@ class InventoryExpenseSummaryView(APIView):
         return Response(summary_data, status=status.HTTP_200_OK)
 
 class ManagerOrderSummaryView(APIView):
-
+    permission_classes = [IsAdminRole]
     def get(self, request):
         # Retrieve the start and end date from the request
         start_date = request.query_params.get('start_date')
@@ -141,5 +142,67 @@ class ManagerOrderSummaryView(APIView):
             }
             for entry in summary
         ]
+        
+        return Response(summary_data, status=status.HTTP_200_OK)
+
+class PaymentMethodIncomeSummaryView(APIView):
+    # permission_classes = [IsAdminRole]
+    def get(self, request):
+        # Retrieve the start and end date from the request
+        start_date = request.query_params.get('start_date')
+        end_date = request.query_params.get('end_date')
+
+        # Validate date inputs
+        if not start_date or not end_date:
+            return Response({'error': 'Please provide both start_date and end_date parameters'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+            end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
+        except ValueError:
+            return Response({'error': 'Invalid date format. Use YYYY-MM-DD.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Aggregate the total income by payment method within the date range
+        summary = OrderPayment.objects.filter(date__range=(start_date, end_date)) \
+            .values(payment_method=F('method__name')) \
+            .annotate(total_income=Sum('amount')) \
+            .order_by('payment_method')
+
+        # Format the data for response
+        summary_data = [
+            {
+                'payment_method': entry['payment_method'],
+                'total_income': entry['total_income']
+            }
+            for entry in summary
+        ]
+        
+        return Response(summary_data, status=status.HTTP_200_OK)
+
+class TotalIncomeSummaryView(APIView):
+    permission_classes = [IsAdminRole]
+    def get(self, request):
+        # Retrieve the start and end date from the request
+        start_date = request.query_params.get('start_date')
+        end_date = request.query_params.get('end_date')
+
+        # Validate date inputs
+        if not start_date or not end_date:
+            return Response({'error': 'Please provide both start_date and end_date parameters'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+            end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
+        except ValueError:
+            return Response({'error': 'Invalid date format. Use YYYY-MM-DD.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Aggregate the total income within the date range
+        total_income = Order.objects.filter(created_at__range=(start_date, end_date)) \
+            .aggregate(total_income=Sum('final_price'))['total_income'] or 0
+
+        # Prepare the data
+        summary_data = {
+            'total_income': total_income
+        }
         
         return Response(summary_data, status=status.HTTP_200_OK)
