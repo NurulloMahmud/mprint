@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Expenses, ExpenseCategory
+from .models import Expenses, ExpenseCategory, InventoryExpense, PaperExpenses
 
 
 class ExpenseAdmin(admin.ModelAdmin):
@@ -9,3 +9,5 @@ class ExpenseAdmin(admin.ModelAdmin):
 
 admin.site.register(Expenses, ExpenseAdmin)
 admin.site.register(ExpenseCategory)
+admin.site.register(InventoryExpense)
+admin.site.register(PaperExpenses)
