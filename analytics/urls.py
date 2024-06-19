@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import (
-    CategoryExpenseSummaryView, PaperExpenseSummaryView
+    CategoryExpenseSummaryView, PaperExpenseSummaryView,
+    InventoryExpenseSummaryView
     )
 
 
@@ -8,4 +9,5 @@ from .views import (
 urlpatterns = [
     path('category-expense-summary/', CategoryExpenseSummaryView.as_view()),
     path('paper-expense-summary/', PaperExpenseSummaryView.as_view()),
+    path('inventory-expense-summary/', InventoryExpenseSummaryView.as_view()),
 ]
