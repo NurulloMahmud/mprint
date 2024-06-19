@@ -128,9 +128,9 @@ class ManagerOrderSummaryView(APIView):
         
         # Aggregate the data
         summary = OrderManager.objects.filter(created_at__range=(start_date, end_date)) \
-            .values(manager=F('manager__username')) \
+            .values(manager_username=F('manager__username')) \
             .annotate(order_count=Count('order'), total_amount=Sum('order__final_price')) \
-            .order_by('manager')
+            .order_by('manager_username')
 
         # Format the data for response
         summary_data = [
@@ -143,4 +143,3 @@ class ManagerOrderSummaryView(APIView):
         ]
         
         return Response(summary_data, status=status.HTTP_200_OK)
-
