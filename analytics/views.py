@@ -17,7 +17,7 @@ from datetime import datetime
 
 
 class CategoryExpenseSummaryView(APIView):
-    # permission_classes = [IsAdminRole]
+    permission_classes = [IsAdminRole]
     def get(self, request):
         # Retrieve the start and end date from the request
         start_date = request.query_params.get('start_date')
@@ -54,7 +54,7 @@ class CategoryExpenseSummaryView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class PaperExpenseSummaryView(APIView):
-    # permission_classes = [IsAdminRole]
+    permission_classes = [IsAdminRole]
     def get(self, request):
         # Retrieve the start and end date from the request
         start_date = request.query_params.get('start_date')
@@ -82,7 +82,7 @@ class PaperExpenseSummaryView(APIView):
         return Response(summary_data, status=status.HTTP_200_OK)
 
 class InventoryExpenseSummaryView(APIView):
-    # permission_classes = [IsAdminRole]
+    permission_classes = [IsAdminRole]
     def get(self, request):
         # Retrieve the start and end date from the request
         start_date = request.query_params.get('start_date')
