@@ -23,7 +23,7 @@ class CustomerSummarySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Customer
-        fields = ['name', 'total_amount']
+        fields = ['name', 'total_amount', 'orders_count']
     
     def get_total_amount(self, obj):
         return Order.objects.filter(customer=obj).aggregate(Sum('final_price'))['final_price__sum']
