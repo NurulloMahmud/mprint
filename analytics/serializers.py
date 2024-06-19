@@ -18,8 +18,8 @@ class CategoryTotalSerializer(serializers.ModelSerializer):
         fields = ['name', 'total_amount']
 
 class CustomerSummarySerializer(serializers.ModelSerializer):
-    total_amount = serializers.DecimalField(max_digits=40, decimal_places=2)
-    orders_count = serializers.IntegerField()
+    total_amount = serializers.SerializerMethodField()
+    orders_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Customer
