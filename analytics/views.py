@@ -52,3 +52,31 @@ class CategoryExpenseSummaryView(APIView):
         serializer = CategoryTotalSerializer(summary_data, many=True)
         
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class PaperExpenseSummaryView(APIView):
+    # permission_classes = [IsAdminRole]
+    def get(self, request):
+        # Retrieve the start and end date from the request
+        start_date = request.query_params.get('start_date')
+        end_date = request.query_params.get('end_date')
+
+        # Validate date inputs
+        if not start_date or not end_date:
+            return Response({'error': 'Please provide both start_date and end_date parameters'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+            end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
+        except ValueError:
+            return Response({'error': 'Invalid date format. Use YYYY-MM-DD.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Aggregate the total amount spent within the date range
+        total_amount = PaperExpenses.objects.filter(created_at__range=(start_date, end_date)) \
+            .aggregate(total_amount=Sum('amount'))['total_amount'] or 0
+
+        # Prepare the data
+        summary_data = {
+            'total_amount': total_amount
+        }
+        
+        return Response(summary_data, status=status.HTTP_200_OK)
