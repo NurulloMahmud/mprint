@@ -17,7 +17,7 @@ from datetime import datetime
 
 
 class CategoryExpenseSummaryView(APIView):
-    permission_classes = [IsAdminRole]
+    # permission_classes = [IsAdminRole]
     def get(self, request):
         # Retrieve the start and end date from the request
         start_date = request.query_params.get('start_date')
