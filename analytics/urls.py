@@ -2,7 +2,8 @@ from django.urls import path
 from .views import (
     CategoryExpenseSummaryView, PaperExpenseSummaryView,
     InventoryExpenseSummaryView, ManagerOrderSummaryView,
-    PaymentMethodIncomeSummaryView, TotalIncomeSummaryView
+    PaymentMethodIncomeSummaryView, TotalIncomeSummaryView,
+    CustomerSummaryView
     )
 
 
@@ -14,4 +15,5 @@ urlpatterns = [
     path('manager-order-summary/', ManagerOrderSummaryView.as_view()),
     path('payment-method-income-summary/', PaymentMethodIncomeSummaryView.as_view()),
     path('total-income-summary/', TotalIncomeSummaryView.as_view()),
+    path('customer-summary/', CustomerSummaryView.as_view()),
 ]

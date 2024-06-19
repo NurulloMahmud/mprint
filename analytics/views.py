@@ -8,11 +8,13 @@ from accounting.models import (
 )
 from main.models import (
     OrderManager, Order,
-    OrderPayment,
+    OrderPayment, Customer
 )
 from users.permissions import IsAdminRole
 
-from .serializers import CategoryTotalSerializer
+from .serializers import (
+    CategoryTotalSerializer, CustomerSummarySerializer
+)
 from datetime import datetime
 
 
@@ -146,7 +148,7 @@ class ManagerOrderSummaryView(APIView):
         return Response(summary_data, status=status.HTTP_200_OK)
 
 class PaymentMethodIncomeSummaryView(APIView):
-    # permission_classes = [IsAdminRole]
+    permission_classes = [IsAdminRole]
     def get(self, request):
         # Retrieve the start and end date from the request
         start_date = request.query_params.get('start_date')
@@ -180,7 +182,7 @@ class PaymentMethodIncomeSummaryView(APIView):
         return Response(summary_data, status=status.HTTP_200_OK)
 
 class TotalIncomeSummaryView(APIView):
-    # permission_classes = [IsAdminRole]
+    permission_classes = [IsAdminRole]
     def get(self, request):
         # Retrieve the start and end date from the request
         start_date = request.query_params.get('start_date')
@@ -206,3 +208,11 @@ class TotalIncomeSummaryView(APIView):
         }
         
         return Response(summary_data, status=status.HTTP_200_OK)
+
+class CustomerSummaryView(APIView):
+    # permission_classes = [IsAdminRole]
+    def get(self, request):
+        customers = Customer.objects.all()
+        serializer = CustomerSummarySerializer(customers, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
