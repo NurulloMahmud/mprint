@@ -287,7 +287,7 @@ class InventoryUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
 class ServiceViewset(ModelViewSet):
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer
-    permission_classes = [IsAdminRole]
+    permission_classes = [IsManagerRole]
 
 
 class CheckServicePrice(APIView):
