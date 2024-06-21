@@ -252,7 +252,7 @@ class OrderCreateView(APIView):
 class PaperTypeViewset(ModelViewSet):
     queryset = PaperType.objects.all()
     serializer_class = PaperTypeSerializer
-    permission_classes = [IsAdminRole]
+    permission_classes = [IsManagerRole]
 
 
 class InventoryListAPIView(generics.ListAPIView):
@@ -287,7 +287,7 @@ class InventoryUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
 class ServiceViewset(ModelViewSet):
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer
-    permission_classes = [IsAdminRole]
+    permission_classes = [IsManagerRole]
 
 
 class CheckServicePrice(APIView):
