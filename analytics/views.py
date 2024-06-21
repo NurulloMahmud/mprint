@@ -215,4 +215,16 @@ class CustomerSummaryView(APIView):
         customers = Customer.objects.all()
         serializer = CustomerSummarySerializer(customers, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
+class OrdersCountByStatusView(APIView):
+    # permission_classes = [IsAdminRole]
+    def get(self, request):
+        non_completed_orders_count = Order.objects.exclude(status__name__iexact='completed').count()
+        completed_orders_count = Order.objects.filter(status__name__iexact='completed').count()
+
+        summary_data = {
+            'non_completed_orders_count': non_completed_orders_count,
+            'completed_orders_count': completed_orders_count
+        }
+        
+        return Response(summary_data, status=status.HTTP_200_OK)

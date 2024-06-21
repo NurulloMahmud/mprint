@@ -3,7 +3,7 @@ from .views import (
     CategoryExpenseSummaryView, PaperExpenseSummaryView,
     InventoryExpenseSummaryView, ManagerOrderSummaryView,
     PaymentMethodIncomeSummaryView, TotalIncomeSummaryView,
-    CustomerSummaryView
+    CustomerSummaryView, OrdersCountByStatusView
     )
 
 
@@ -16,4 +16,5 @@ urlpatterns = [
     path('payment-method-income-summary/', PaymentMethodIncomeSummaryView.as_view()),
     path('total-income-summary/', TotalIncomeSummaryView.as_view()),
     path('customer-summary/', CustomerSummaryView.as_view()),
+    path('orders-count-by-status/', OrdersCountByStatusView.as_view()),
 ]
