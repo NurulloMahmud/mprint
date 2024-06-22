@@ -241,9 +241,10 @@ class OrderCreateView(APIView):
                     OrderPayment.objects.create(order=order, amount=initial_payment_amount, method=method_obj)
                 
                 if order.customer.telegram_id is not None and initial_payment_amount == 0:
-                    text = f"Assalomu aleykum, buyurtmangiz qabul qilindi\nBuyurtma nomi: {order.name}\nUmumiy narx: {order.final_price}\nOldindan to'lov: {initial_payment_amount}\nBuyurtmadan qolgan qarzingiz: {final_price - initial_payment_amount}\nMenejer: {request.user.username}"
+                    text = f"Assalomu aleykum, buyurtmangiz qabul qilindi\nBuyurtma nomi: {order.name}\nUmumiy narx: {order.final_price}\nOldindan to'lov: {initial_payment_amount}\nBuyurtmadan qolgan qarzingiz: {final_price - initial_payment_amount}\nMenejer: {request.user.username}\nBuyurtmangiz pechat qilish jarayonida."
                     try:
                         send_telegram_message(text, int(order.customer.telegram_id))
+                        text += f"\nMijoz {order.customer.name}"
                         send_telegram_message(text, 5769837552)
                     except:
                         pass
