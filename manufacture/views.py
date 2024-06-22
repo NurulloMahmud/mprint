@@ -45,14 +45,14 @@ class OrderStatusAutoChange(APIView):
                 status_obj = Status.objects.get(name="Qayta ishlash")
                 text = f"Sizning {order.id} raqamli buyurtmangiz pechat qilindi va qayta ishlash jarayoniga o'tkazildi.\nBuyurtma nomi: {order.name}"
                 try:
-                    send_telegram_message(text, order.customer.telegram_id)
+                    send_telegram_message(text, 5769837552)
                 except:
                     pass
             elif order.status.name.lower() == "qayta ishlash":
                 status_obj = Status.objects.get(name="Completed")
                 text = f"Sizning {order.id} raqamli buyurtmangiz tayyor bo'ldi.\nBuyurtma nomi: {order.name}"
                 try:
-                    send_telegram_message(text, order.customer.telegram_id)
+                    send_telegram_message(text, 5769837552)
                 except:
                     pass
             elif order.status.name.lower() == "review":
