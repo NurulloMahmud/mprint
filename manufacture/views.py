@@ -43,12 +43,18 @@ class OrderStatusAutoChange(APIView):
                 status_obj = Status.objects.get(name="Pechat")
             elif order.status.name.lower() == "pechat":
                 status_obj = Status.objects.get(name="Qayta ishlash")
-                text = f"Sizning {order.id} raqamli buyurtmangiz pechat qilindi va qayta ishlash jarayoniga o'tkazildi."
-                send_telegram_message(text, order.customer.telegram_id)
+                text = f"Sizning {order.id} raqamli buyurtmangiz pechat qilindi va qayta ishlash jarayoniga o'tkazildi.\nBuyurtma nomi: {order.name}"
+                try:
+                    send_telegram_message(text, order.customer.telegram_id)
+                except:
+                    pass
             elif order.status.name.lower() == "qayta ishlash":
                 status_obj = Status.objects.get(name="Completed")
-                text = f"Sizning {order.id} raqamli buyurtmangiz tayyor bo'ldi."
-                send_telegram_message(text, order.customer.telegram_id)
+                text = f"Sizning {order.id} raqamli buyurtmangiz tayyor bo'ldi.\nBuyurtma nomi: {order.name}"
+                try:
+                    send_telegram_message(text, order.customer.telegram_id)
+                except:
+                    pass
             elif order.status.name.lower() == "review":
                 status_obj = Status.objects.get(name="Completed")
             elif order.status.name.lower() == "completed":
