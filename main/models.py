@@ -4,6 +4,7 @@ from decimal import Decimal
 from django.core.exceptions import ValidationError
 import math
 from django.db.models import Sum
+from main.bot import send_telegram_message
 
 
 
@@ -239,6 +240,14 @@ class OrderPayment(models.Model):
                     raise ValidationError("To'lov miqdori to'g'ri emas")
                 customer_debt.amount -= self.amount
                 customer_debt.save()
+
+                # send telegram message
+                if self.order.customer.telegram_id:
+                    text = f"Assalomu aleykum\n{self.order.id} raqarmli buyurtmangiz uchun to'lov qabul qilindi\nTo'langan summa: {self.amount}\nBuyurtmadan qolgan qarzingiz: {customer_debt.amount}"
+                    try:
+                        send_telegram_message(self.order.customer.telegram_id, text)
+                    except:
+                        pass
             else:
                 total_paid = OrderPayment.objects.filter(order=self.order).aggregate(Sum('amount'))['amount__sum'] or 0
                 if total_paid + self.amount > self.order.final_price:

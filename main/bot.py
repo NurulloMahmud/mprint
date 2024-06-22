@@ -11,5 +11,8 @@ def send_telegram_message(text: str, chat_id: int):
         'chat_id': chat_id,
         'text': text
     }
-    requests.post(url, data=params)
+    try:
+        requests.post(url, data=params)
+    except Exception:
+        pass
     return None

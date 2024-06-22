@@ -17,6 +17,7 @@ from .serializers import OrderUpdateSerializer, ActiveOrdersSerializer \
     , InventoryUpdateSerializer, PechatUserJobSerializer, ServiceOrderByUserSerializer
 from main.serializers import OrderReadSerializer
 from main.pagination import CustomPagination
+from main.bot import send_telegram_message
 
 
 class OrderStatusAutoChange(APIView):
@@ -42,8 +43,12 @@ class OrderStatusAutoChange(APIView):
                 status_obj = Status.objects.get(name="Pechat")
             elif order.status.name.lower() == "pechat":
                 status_obj = Status.objects.get(name="Qayta ishlash")
+                text = f"Sizning {order.id} raqamli buyurtmangiz pechat qilindi va qayta ishlash jarayoniga o'tkazildi."
+                send_telegram_message(text, order.customer.telegram_id)
             elif order.status.name.lower() == "qayta ishlash":
-                status_obj = Status.objects.get(name="Review")
+                status_obj = Status.objects.get(name="Completed")
+                text = f"Sizning {order.id} raqamli buyurtmangiz tayyor bo'ldi."
+                send_telegram_message(text, order.customer.telegram_id)
             elif order.status.name.lower() == "review":
                 status_obj = Status.objects.get(name="Completed")
             elif order.status.name.lower() == "completed":
