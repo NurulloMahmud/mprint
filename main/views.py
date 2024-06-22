@@ -240,8 +240,8 @@ class OrderCreateView(APIView):
                     method_obj = get_object_or_404(PaymentMethod, id=initial_payment_method)
                     OrderPayment.objects.create(order=order, amount=initial_payment_amount, method=method_obj)
                 
-                if order.customer.telegram_id:
-                    text = f"Assalomu aleykum, buyurtmangiz qabul qilindi\nBuyurtma raqami: {order.id}\nUmumiy narx: {order.final_price}\nOldindan to'lov: {initial_payment_amount}\nQarzingiz: {final_price - initial_payment_amount}"
+                if order.customer.telegram_id is not None and initial_payment_amount == 0:
+                    text = f"Assalomu aleykum, buyurtmangiz qabul qilindi\nBuyurtma raqami: {order.id}\nUmumiy narx: {order.final_price}\nOldindan to'lov: {initial_payment_amount}\nBuyurtmadan qolgan qarzingiz: {final_price - initial_payment_amount}"
                     send_telegram_message(text, int(order.customer.telegram_id))
 
                 # Handle image uploads
