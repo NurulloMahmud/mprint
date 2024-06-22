@@ -37,6 +37,7 @@ from .custom import OrderCreateCustomSerializer
 
 from users.permissions import IsAdminRole, IsManagerRole
 from main.pagination import CustomPagination
+from main.bot import send_telegram_message
 
 
 
@@ -238,6 +239,10 @@ class OrderCreateView(APIView):
                     initial_payment_method = data.get('initial_payment_method', None)
                     method_obj = get_object_or_404(PaymentMethod, id=initial_payment_method)
                     OrderPayment.objects.create(order=order, amount=initial_payment_amount, method=method_obj)
+                
+                if order.customer.telegram_id:
+                    text = f"Assalomu aleykum, buyurtmangiz qabul qilindi\nBuyurtma raqami: {order.id}\nUmumiy narx: {order.final_price}\nOldindan to'lov: {initial_payment_amount}\nQarzingiz: {final_price - initial_payment_amount}"
+                    send_telegram_message(text, int(order.customer.telegram_id))
 
                 # Handle image uploads
                 for image_file in request.FILES.getlist('pics'):
