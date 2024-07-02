@@ -5,11 +5,11 @@ from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import generics
 
-from .models import ExpenseCategory, Expenses, InventoryExpense
+from .models import ExpenseCategory, Expenses, InventoryExpense, Debt
 from .serializers import ExpenseCategorySerializer, PaymentMethodSerializer, OrderPaymentReadSerializer, OrderPaymentWriteSerializer \
     , CustomerDebtReadSerializer, OrdersDebtListSerializer, ExpensesWriteSerializer, ExpensesReadSerializer \
     , InventorySerializer, InventoryExpenseSerializer, PaperUsageSummarySerializer, InventoryExpenseSummarySerializer, \
-    InventoryExpenseCreateSerializer, CustomerDebtListSerializer, OrderDetailSerializer
+    InventoryExpenseCreateSerializer, CustomerDebtListSerializer, OrderDetailSerializer, DebtSerializer
 from users.permissions import IsAdminRole, IsManagerRole
 from main.models import PaymentMethod, OrderPayment, Customer, CustomerDebt
 from drf_yasg.utils import swagger_auto_schema
@@ -182,3 +182,8 @@ class OrderDebtByCustomerListView(APIView):
         debt = CustomerDebt.objects.filter(customer=customer).order_by('-amount', '-order__date')
         serializer = CustomerDebtListSerializer(debt, many=True)
         return Response(serializer.data)
+
+class DebtViewSet(ModelViewSet):
+    queryset = Debt.objects.all()
+    serializer_class = DebtSerializer
+    permission_classes = [IsAdminRole]

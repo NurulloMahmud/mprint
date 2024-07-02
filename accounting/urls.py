@@ -3,7 +3,7 @@ from .views import ExpenseCategoryViewSet, ExpensesModelViewset, OrderPaymentVie
     , DebtListByCustomer, CustomerDebtListView, OrdersDebtList, \
     InventoryViewset, InventoryExpenseViewset, PaperUsageSummaryView \
     , InventoryExpenseSummaryView, InventoryExpenseCreateView, \
-    OrderDetailView, OrderDebtListView, OrderDebtByCustomerListView
+    OrderDetailView, OrderDebtListView, OrderDebtByCustomerListView, DebtViewSet
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
@@ -13,6 +13,7 @@ router.register(r'payment_method', PaymentMethodViewSet, basename='payment_metho
 router.register(r'payment', OrderPaymentViewset, basename='payment')
 router.register(r'inventory', InventoryViewset, basename='inventory')
 router.register(r'inventory_expense', InventoryExpenseViewset, basename='inventory_expense')
+router.register(r'debt', DebtViewSet, basename='debt')
 
 
 
