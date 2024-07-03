@@ -131,7 +131,7 @@ class OrderListView(generics.ListAPIView):
     serializer_class = OrderReadSerializer
 
     def get_queryset(self):
-        return Order.objects.all().exclude(status__name="Completed")
+        return Order.objects.all().exclude(status__name="mijoz olib ketdi")
 
 
 class OrderCreateView(APIView):
