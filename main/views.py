@@ -185,7 +185,7 @@ class OrderCreateView(APIView):
                 branch_obj = request.user.branch
             paper_obj = get_object_or_404(Paper, id=data['paper_id'])
             # Ensure the default status is set if the order is new
-            status_obj = Status.objects.get(name="Pending")
+            status_obj = Status.objects.get(name="Kutishda")
         except Exception as e:
             return Response({"success": False, "message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
