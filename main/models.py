@@ -87,7 +87,7 @@ class Order(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.pk:  # If the order is being created (not updated)
-            pending_status = Status.objects.get(name="Pending")
+            pending_status = Status.objects.get(name="Kutishda")
             self.status = pending_status
         else:
             obj = Order.objects.get(pk=self.pk)
@@ -96,7 +96,7 @@ class Order(models.Model):
         super().save(*args, **kwargs)
     
     def delete(self, *args, **kwargs):
-        if self.status.name != 'Pending':
+        if self.status.name != 'Kutishda':
             raise ValidationError('Order cannot be deleted')
         else:
             num_of_lists = int(self.num_of_lists or 0)
