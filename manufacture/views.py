@@ -39,7 +39,7 @@ class OrderStatusAutoChange(APIView):
     def post(self, request, pk):
         order = get_object_or_404(Order, id=pk)
         if request.user.role.lower() in ["admin", "manager"]:
-            if order.status.name.lower() == "Kutishda":
+            if order.status.name.lower() == "kutishda":
                 status_obj = Status.objects.get(name="Pechat")
             elif order.status.name.lower() == "pechat":
                 status_obj = Status.objects.get(name="Qayta ishlash")
