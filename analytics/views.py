@@ -219,8 +219,8 @@ class CustomerSummaryView(APIView):
 class OrdersCountByStatusView(APIView):
     permission_classes = [IsAdminRole]
     def get(self, request):
-        non_completed_orders_count = Order.objects.exclude(status__name__iexact='completed').count()
-        completed_orders_count = Order.objects.filter(status__name__iexact='completed').count()
+        non_completed_orders_count = Order.objects.exclude(status__name__iexact='mijoz olib ketdi').count()
+        completed_orders_count = Order.objects.filter(status__name__iexact='mijoz olib ketdi').count()
 
         summary_data = {
             'non_completed_orders_count': non_completed_orders_count,

@@ -39,7 +39,7 @@ class OrderStatusAutoChange(APIView):
     def post(self, request, pk):
         order = get_object_or_404(Order, id=pk)
         if request.user.role.lower() in ["admin", "manager"]:
-            if order.status.name.lower() == "pending":
+            if order.status.name.lower() == "Kutishda":
                 status_obj = Status.objects.get(name="Pechat")
             elif order.status.name.lower() == "pechat":
                 status_obj = Status.objects.get(name="Qayta ishlash")
@@ -50,7 +50,7 @@ class OrderStatusAutoChange(APIView):
                 except:
                     pass
             elif order.status.name.lower() == "qayta ishlash":
-                status_obj = Status.objects.get(name="Completed")
+                status_obj = Status.objects.get(name="mijoz olib ketdi")
                 text = f"Sizning {order.id} raqamli buyurtmangiz tayyor bo'ldi.\nBuyurtma nomi: {order.name}\nBuyurtmachi: {order.customer.name}"
                 try:
                     send_telegram_message(text, 5769837552)
@@ -58,13 +58,13 @@ class OrderStatusAutoChange(APIView):
                 except:
                     pass
             elif order.status.name.lower() == "review":
-                status_obj = Status.objects.get(name="Completed")
-            elif order.status.name.lower() == "completed":
+                status_obj = Status.objects.get(name="mijoz olib ketdi")
+            elif order.status.name.lower() == "mijoz olib ketdi":
                 return Response({"success": False}, status=404)
         elif request.user.role.lower() == "pechat":
             status_obj = Status.objects.get(name="Qayta ishlash")
         elif request.user.role.lower() == "qayta ishlash":
-            status_obj = Status.objects.get(name="Review")
+            status_obj = Status.objects.get(name="mijoz olib ketdi")
         order.status = status_obj
         order.save()
         return Response({"success": True})
@@ -109,7 +109,7 @@ class OrderListByUser(generics.ListAPIView):
         """
         user = self.request.user
         if user.role.lower() in ["admin", "manager"]:
-            return Order.objects.all().order_by('-date').exclude(status__name="Completed")
+            return Order.objects.all().order_by('-date').exclude(status__name="mijoz olib ketdi")
         else:
             return Order.objects.filter(branch=user.branch, status__name=user.role.capitalize()).order_by('-date')
 
@@ -123,14 +123,14 @@ class CompletedOrdersList(generics.ListAPIView):
         end_date = self.request.query_params.get('end_date')
         if not start_date or not end_date:
             return Order.objects.none()
-        return Order.objects.filter(status__name="Completed", date__range=[start_date, end_date]).order_by('-date')
+        return Order.objects.filter(status__name="mijoz olib ketdi", date__range=[start_date, end_date]).order_by('-date')
 
 class ActiveOrdersList(generics.ListAPIView):
     serializer_class = ActiveOrdersSerializer
     permission_classes = [IsManagerRole]
 
     def get_queryset(self):
-        return Order.objects.all().exclude(status__name="Completed").values('id', 'name', 'final_price', 'date')
+        return Order.objects.all().exclude(status__name="mijoz olib ketdi").values('id', 'name', 'final_price', 'date')
 
 class InventoryListAPIView(generics.ListAPIView):
     queryset = Inventory.objects.all()

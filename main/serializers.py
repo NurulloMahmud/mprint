@@ -120,7 +120,7 @@ class OrderDeleteSerializer(serializers.ModelSerializer):
         fields = ['id']
     
     def delete(self, instance):
-        if instance.status.name != 'Pending':
+        if instance.status.name != 'Kutishda':
             raise serializers.ValidationError('Order cannot be deleted')
         else:
             instance.delete()
