@@ -221,7 +221,7 @@ class OrderCreateView(APIView):
                 order.calculate(service_ids)
 
                 # Handle Payments and Debts
-                initial_payment_amount = data.get('initial_payment_amount', None)
+                initial_payment_amount = Decimal(data.get('initial_payment_amount', 0))
                 # Checking if the value is 'undefined' or None, and setting it to 0 if so
                 if initial_payment_amount is None or initial_payment_amount == 'undefined':
                     initial_payment_amount = 0
