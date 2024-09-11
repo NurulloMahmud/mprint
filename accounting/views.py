@@ -47,6 +47,14 @@ class OrderPaymentViewset(ModelViewSet):
         if self.action in ['list', 'retrieve']:
             return OrderPaymentReadSerializer
         return OrderPaymentWriteSerializer
+    
+    def perform_destroy(self, instance):
+        customer = instance.order.customer
+        order = instance.order
+        customer_debt = CustomerDebt.objects.filter(customer=customer, order=order).first()
+        if customer_debt:
+            customer_debt.amount += instance.amount
+        instance.delete()
 
 class CustomerDebtListView(generics.ListAPIView):
     queryset = Customer.objects.all()
