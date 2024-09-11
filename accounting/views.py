@@ -54,6 +54,7 @@ class OrderPaymentViewset(ModelViewSet):
         customer_debt = CustomerDebt.objects.filter(customer=customer, order=order).first()
         if customer_debt:
             customer_debt.amount += instance.amount
+            customer_debt.save()
         instance.delete()
 
 class CustomerDebtListView(generics.ListAPIView):
