@@ -93,6 +93,16 @@ class Order(models.Model):
             obj = Order.objects.get(pk=self.pk)
             if self.status.name.lower() == "pending" and obj.status.name.lower() in ["completed", "review"]:
                 raise ValidationError("Order cannot be updated")
+            
+            # add debt to customer if order is finished
+            # if order in finished status is being updated, delete debt from customer
+            if obj.status.name != "mijoz olib ketdi" and self.status.name == "mijoz olib ketdi":
+                total_paid = OrderPayment.objects.filter(order=self).aggregate(Sum('amount'))['amount__sum'] or 0
+                if total_paid < self.final_price:
+                    CustomerDebt.objects.create(order=self, amount=self.final_price - total_paid)
+            elif obj.status.name == "mijoz olib ketdi" and self.status.name != "mijoz olib ketdi":
+                CustomerDebt.objects.filter(order=self).delete()
+
         super().save(*args, **kwargs)
     
     def delete(self, *args, **kwargs):

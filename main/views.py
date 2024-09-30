@@ -233,8 +233,8 @@ class OrderCreateView(APIView):
                     initial_payment_amount = 0  # Or handle the error as needed
 
                 final_price = Decimal(order.final_price)
-                if initial_payment_amount <= final_price:
-                    CustomerDebt.objects.create(customer=customer_obj, order=order, amount=final_price - initial_payment_amount)
+                # if initial_payment_amount <= final_price:
+                #     CustomerDebt.objects.create(customer=customer_obj, order=order, amount=final_price - initial_payment_amount)
                 if int(initial_payment_amount) > 0:
                     initial_payment_method = data.get('initial_payment_method', None)
                     method_obj = get_object_or_404(PaymentMethod, id=initial_payment_method)
