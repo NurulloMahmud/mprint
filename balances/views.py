@@ -24,6 +24,9 @@ class CloseMonth(APIView):
 
         if not year or not month:
             return Response({'error': 'Please provide both year and month parameters'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if BalanceSheet.objects.filter(date__year=year, date__month=month).exists():
+            return Response({'error': 'Month already closed'}, status=status.HTTP_400_BAD_REQUEST)
 
         date_obj = datetime(year=int(year), month=int(month), day=1)
 
