@@ -22,6 +22,9 @@ class Stakeholder(models.Model):
                 raise ValidationError("Umumiy fonding balansi 100% dan oshmasligi kerak")
             
         super().save(*args, **kwargs)
+    
+    class Meta:
+        ordering = ['id']
 
 # think of this model as income
 class BalanceSheet(models.Model):
@@ -41,4 +44,7 @@ class Expense(models.Model):
 
     def __str__(self):
         return f"{self.date} - {self.stakeholder.name}"
+    
+    class Meta:
+        ordering = ['-date']
 
