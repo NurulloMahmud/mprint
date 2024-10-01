@@ -22,6 +22,18 @@ class StakeHolderWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stakeholder
         fields = ['id', 'name', 'percent']
+    
+    def create(self, validated_data):
+        total = Stakeholder.objects.aggregate(Sum('percent'))['percent__sum'] or 0
+        if total + validated_data['percent'] > 100:
+            raise serializers.ValidationError("Umumiy fonding balansi 100% dan oshmasligi kerak")
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        total = Stakeholder.objects.exclude(pk=instance.pk).aggregate(Sum('percent'))['percent__sum'] or 0
+        if total + validated_data['percent'] > 100:
+            raise serializers.ValidationError("Umumiy fonding balansi 100% dan oshmasligi kerak")
+        return super().update(instance, validated_data)
 
 
 class ExpensesViewSerializer(serializers.ModelSerializer):
