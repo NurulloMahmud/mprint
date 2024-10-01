@@ -37,6 +37,7 @@ class Expenses(models.Model):
     date = models.DateField()
     amount = models.DecimalField(decimal_places=2, max_digits=40)
     stakeholder = models.ForeignKey(Stakeholder, on_delete=models.CASCADE)
+    description = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.date} - {self.stakeholder.name}"
