@@ -78,7 +78,10 @@ class ExpensesListView(generics.ListAPIView):
         # get stakeholder id from query params
         stakeholder_id = self.request.query_params.get('stakeholder_id')
 
-        if not stakeholder_id.isdigit():
+        if not stakeholder_id:
+            return Expenses.objects.all()
+
+        if stakeholder_id and not stakeholder_id.isdigit() or not Stakeholder.objects.filter(id=stakeholder_id).exists():
             raise ValueError('Invalid stakeholder ID')
 
         if stakeholder_id:
