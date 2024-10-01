@@ -41,7 +41,11 @@ class CloseMonth(APIView):
 
         if total_balance < 0:
             today = datetime.now().date()
-            
+            BalanceSheet.objects.create(
+                date=date_obj,
+                balance=0,
+                stakeholder=botir_aka_obj
+            )
             Expenses.objects.create(
                 date=today,
                 amount=Decimal(total_balance),
