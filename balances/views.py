@@ -48,7 +48,7 @@ class CloseMonth(APIView):
             )
             Expense.objects.create(
                 date=today,
-                amount=Decimal(total_balance),
+                amount=Decimal(total_balance*-1),
                 stakeholder=botir_aka_obj,
                 description="Yopilgan oydan zarar"
             )
