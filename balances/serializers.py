@@ -10,7 +10,7 @@ class StakeHolderViewSerializer(serializers.ModelSerializer):
     total = serializers.SerializerMethodField()
     class Meta:
         model = Stakeholder
-        fields = ['id', 'name', 'percent']
+        fields = ['id', 'name', 'percent', 'total']
 
     def get_total(self, obj):
         total_income = BalanceSheet.objects.filter(stakeholder=obj).aggregate(Sum('balance'))['balance__sum'] or 0
