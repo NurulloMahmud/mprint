@@ -3,10 +3,10 @@ from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework import status
 from datetime import datetime
-from .models import BalanceSheet, Stakeholder, Expenses
+from .models import BalanceSheet, Stakeholder, Expense
 from .serializers import (
     StakeHolderViewSerializer, StakeHolderWriteSerializer, 
-    ExpensesViewSerializer, ExpensesWriteSerializer
+    ExpenseViewSerializer, ExpenseWriteSerializer
 )
 
 from django.db.models import Sum
@@ -46,7 +46,7 @@ class CloseMonth(APIView):
                 balance=0,
                 stakeholder=botir_aka_obj
             )
-            Expenses.objects.create(
+            Expense.objects.create(
                 date=today,
                 amount=Decimal(total_balance),
                 stakeholder=botir_aka_obj,
@@ -78,15 +78,15 @@ class StakeHolderUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class ExpensesListView(generics.ListAPIView):
-    serializer_class = ExpensesViewSerializer
-    queryset = Expenses.objects.all()  
+    serializer_class = ExpenseViewSerializer
+    queryset = Expense.objects.all()  
 
     def get_queryset(self):
         # get stakeholder id from query params
         stakeholder_id = self.request.query_params.get('stakeholder_id')
 
         if not stakeholder_id:
-            return Expenses.objects.all()
+            return Expense.objects.all()
 
         if stakeholder_id and not stakeholder_id.isdigit() or not Stakeholder.objects.filter(id=stakeholder_id).exists():
             raise ValueError('Invalid stakeholder ID')
@@ -95,12 +95,12 @@ class ExpensesListView(generics.ListAPIView):
             if not Stakeholder.objects.filter(id=stakeholder_id).exists():
                 raise ValueError('Stakeholder not found')
             
-            return Expenses.objects.filter(stakeholder__id=stakeholder_id)
+            return Expense.objects.filter(stakeholder__id=stakeholder_id)
         else:
-            return Expenses.objects.all()
+            return Expense.objects.all()
 
 
 class ExpensesCreateView(generics.CreateAPIView):
-    serializer_class = ExpensesWriteSerializer
-    queryset = Expenses.objects.all()
+    serializer_class = ExpenseWriteSerializer
+    queryset = Expense.objects.all()
 

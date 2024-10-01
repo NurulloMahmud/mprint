@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.db.models import Sum
 
-from .models import BalanceSheet, Stakeholder, Expenses
+from .models import BalanceSheet, Stakeholder, Expense
 
 from decimal import Decimal
 
@@ -14,8 +14,8 @@ class StakeHolderViewSerializer(serializers.ModelSerializer):
 
     def get_total(self, obj):
         total_income = BalanceSheet.objects.filter(stakeholder=obj).aggregate(Sum('balance'))['balance__sum'] or 0
-        total_expenses = Expenses.objects.filter(stakeholder=obj).aggregate(Sum('amount'))['amount__sum'] or 0
-        return Decimal(total_income) - Decimal(total_expenses)
+        total_expense = Expense.objects.filter(stakeholder=obj).aggregate(Sum('amount'))['amount__sum'] or 0
+        return Decimal(total_income) - Decimal(total_expense)
     
 
 class StakeHolderWriteSerializer(serializers.ModelSerializer):
@@ -36,15 +36,15 @@ class StakeHolderWriteSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
 
-class ExpensesViewSerializer(serializers.ModelSerializer):
+class ExpenseViewSerializer(serializers.ModelSerializer):
     stakeholder = StakeHolderWriteSerializer()
     class Meta:
-        model = Expenses
+        model = Expense
         fields = '__all__'
 
 
-class ExpensesWriteSerializer(serializers.ModelSerializer):
+class ExpenseWriteSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Expenses
+        model = Expense
         fields = '__all__'
 

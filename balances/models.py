@@ -33,7 +33,7 @@ class BalanceSheet(models.Model):
         return f"{self.date} - {self.stakeholder.name}"
 
 
-class Expenses(models.Model):
+class Expense(models.Model):
     date = models.DateField()
     amount = models.DecimalField(decimal_places=2, max_digits=40)
     stakeholder = models.ForeignKey(Stakeholder, on_delete=models.CASCADE)
