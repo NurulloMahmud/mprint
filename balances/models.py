@@ -23,7 +23,7 @@ class Stakeholder(models.Model):
             
         super().save(*args, **kwargs)
 
-
+# think of this model as income
 class BalanceSheet(models.Model):
     date = models.DateField()
     balance = models.DecimalField(decimal_places=2, max_digits=40)
