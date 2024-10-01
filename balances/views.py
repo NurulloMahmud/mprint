@@ -40,10 +40,17 @@ class CloseMonth(APIView):
         botir_aka_obj = Stakeholder.objects.filter(name__icontains="botir").first()
 
         if total_balance < 0:
+            today = datetime.now().date()
             BalanceSheet.objects.create(
                 date=date_obj,
                 balance=Decimal(total_balance),
                 stakeholder=botir_aka_obj
+            )
+            Expenses.objects.create(
+                date=today,
+                amount=Decimal(total_balance),
+                stakeholder=botir_aka_obj,
+                description="Yopilgan oydan zarar"
             )
             return Response({'message': 'Month closed successfully'}, status=status.HTTP_200_OK)
         else:
