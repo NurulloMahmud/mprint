@@ -98,7 +98,7 @@ class Order(models.Model):
             # if order in finished status is being updated, delete debt from customer
             if obj.status.name != "mijoz olib ketdi" and self.status.name == "mijoz olib ketdi":
                 total_paid = OrderPayment.objects.filter(order=self).aggregate(Sum('amount'))['amount__sum'] or 0
-                if total_paid < self.final_price:
+                if total_paid < self.final_price and not CustomerDebt.objects.filter(order=self).exists():
                     CustomerDebt.objects.create(order=self, amount=self.final_price - total_paid, customer=self.customer)
             elif obj.status.name == "mijoz olib ketdi" and self.status.name != "mijoz olib ketdi":
                 CustomerDebt.objects.filter(order=self).delete()
