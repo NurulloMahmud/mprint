@@ -66,7 +66,9 @@ class Customer(models.Model):
 
 
 class Order(models.Model):
-    date = models.DateField(auto_now_add=True)
+    from datetime import date
+
+    date = models.DateField(default=date.today)
     name = models.CharField(max_length=500)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     products_qty = models.IntegerField(null=True, blank=True)
