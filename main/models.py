@@ -148,7 +148,8 @@ class Order(models.Model):
             PaperExpenses.objects.create(
                 paper=self.paper,
                 quantity=num_of_papers_used,
-                order=self
+                order=self,
+                created_at=self.date
             )
         else:
             total_paper_price = Decimal(0)
@@ -229,9 +230,11 @@ class PaymentMethod(models.Model):
 
 
 class OrderPayment(models.Model):
+    from datetime import date as d
+
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="payments")
     amount = models.DecimalField(decimal_places=2, max_digits=40)
-    date = models.DateField(auto_now_add=True)
+    date = models.DateField(default=d.today)
     method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self) -> str:

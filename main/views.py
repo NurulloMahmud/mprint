@@ -247,7 +247,7 @@ class OrderCreateView(APIView):
                 if int(initial_payment_amount) > 0:
                     initial_payment_method = data.get('initial_payment_method', None)
                     method_obj = get_object_or_404(PaymentMethod, id=initial_payment_method)
-                    OrderPayment.objects.create(order=order, amount=initial_payment_amount, method=method_obj)
+                    OrderPayment.objects.create(order=order, amount=initial_payment_amount, method=method_obj, date=order.date)
                 
                 if order.customer.telegram_id is not None and initial_payment_amount == 0:
                     text = f"Assalomu aleykum, buyurtmangiz qabul qilindi\nBuyurtma nomi: {order.name}\nUmumiy narx: {order.final_price}\nOldindan to'lov: {initial_payment_amount}\nBuyurtmadan qolgan qarzingiz: {final_price - initial_payment_amount}\nMenejer: {request.user.username}\nBuyurtmachi: {order.customer.name}\nBuyurtmangiz pechat qilish jarayonida."

@@ -50,7 +50,9 @@ class InventoryExpense(models.Model):
         return self.item.name
 
 class PaperExpenses(models.Model):
-    created_at = models.DateField(auto_now_add=True)
+    from datetime import date
+
+    created_at = models.DateField(default=date.today)
     paper = models.ForeignKey(Paper, on_delete=models.CASCADE)
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="paper_expenses")
     quantity = models.IntegerField()
