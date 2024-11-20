@@ -144,3 +144,10 @@ class InventorySerializer(serializers.ModelSerializer):
         branch_obj = Branch.objects.get(id=branch_data['id'])
         instance.branch = branch_obj
         return super().update(instance, validated_data)
+
+
+class OrderDateUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = ['date']
+

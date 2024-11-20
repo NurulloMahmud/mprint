@@ -29,7 +29,7 @@ from .serializers import (
     PaperTypeSerializer, InventoryReadSerializer,
     InventoryWriteSerializer, ServiceSerializer,
     OrderDeleteSerializer, InventorySerializer,
-    StatusReadSerializer
+    StatusReadSerializer, OrderDateUpdateSerializer,
 )
 
 from .custom import OrderCreateCustomSerializer
@@ -39,6 +39,7 @@ from users.permissions import IsAdminRole, IsManagerRole
 from main.pagination import CustomPagination
 from main.bot import send_telegram_message
 
+from datetime import datetime
 
 
 class StatusViewSet(ModelViewSet):
@@ -175,6 +176,13 @@ class OrderCreateView(APIView):
     )
     def post(self, request):
         data = request.data
+        date=data['date']
+        date_obj = None
+
+        try:
+            date_obj = datetime.strptime(date, '%Y-%m-%d').date()
+        except Exception as e:
+            return Response({"success": False, "message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
         # Validate and fetch related objects
         try:
@@ -193,6 +201,7 @@ class OrderCreateView(APIView):
             with transaction.atomic():
                 # Assuming all the numerical data is valid and conversions are not needed (handled in frontend or here with try-except)
                 order = Order.objects.create(
+                    date=date_obj,
                     name=data['name'],
                     customer=customer_obj,
                     products_qty=data['products_qty'],
@@ -376,3 +385,8 @@ class InventoryModelViewset(ModelViewSet):
     serializer_class = InventorySerializer
     permission_classes = [IsAdminRole]
 
+
+class OrderDateUpdateView(generics.UpdateAPIView):
+    queryset = Order.objects.all()
+    serializer_class = OrderDateUpdateSerializer
+    permission_classes = [IsAdminRole]
