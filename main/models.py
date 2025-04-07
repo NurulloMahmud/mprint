@@ -6,6 +6,8 @@ import math
 from django.db.models import Sum
 from main.bot import send_telegram_message
 
+from datetime import datetime, date
+
 
 
 class Branch(models.Model):
@@ -68,24 +70,24 @@ class Customer(models.Model):
 class Order(models.Model):
     from datetime import date
 
-    date = models.DateField(default=date.today)
-    name = models.CharField(max_length=500)
+    date = models.DateField(default=date.today) # bu field nomi created_at bolsa yaxshi edi
+    name = models.CharField(max_length=500) 
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    products_qty = models.IntegerField(null=True, blank=True)
-    paper = models.ForeignKey(Paper, on_delete=models.CASCADE, null=True, blank=True)
-    num_of_lists = models.IntegerField(null=True, blank=True)
-    total_sqr_meter = models.FloatField(null=True, blank=True)
-    possible_defect_list = models.IntegerField(null=True, blank=True)
-    price_per_list = models.DecimalField(decimal_places=2, max_digits=40, null=True, blank=True)
-    total_price = models.DecimalField(decimal_places=2, max_digits=40)
+    products_qty = models.IntegerField(null=True, blank=True)   # mijozga nechta mahsulot kerakligi (misol 100 ta etiket)
+    paper = models.ForeignKey(Paper, on_delete=models.CASCADE, null=True, blank=True)   # qaysi qogoz ishlatilganligi
+    num_of_lists = models.IntegerField(null=True, blank=True)   # skladdagi qogozdan bolinib list qilinadi, misol 1000 ta etiket kerak va uning uchun 100 ta list kerak, 100 list chiqarish uchun esa 50 ta raw paper ishlatiladi skladdan (paper bn listni farqi shuyerda)
+    total_sqr_meter = models.FloatField(null=True, blank=True)  # zakazning ummumiy kvadrat metri, shunga kora servislar narxlanadi, misol pechat qilish metr kvadratiga 200 som bolsa shuyerdagi metr kvadratga qarab xisob qilinadi, bu fieldni user ozi kiritadi
+    possible_defect_list = models.IntegerField(null=True, blank=True)   # damage bolib qolish mumkin bolgan listlar soni, bu listlar ham skladdagi qogozdan ishlatiladi yani minus qilinishi kerak va mijoz bu listlar uchun ham pul tolaydi. bu fieldni user ozi kiritadi
+    price_per_list = models.DecimalField(decimal_places=2, max_digits=40, null=True, blank=True)    # har bitta list uchun mijoz qancha tolayapti
+    total_price = models.DecimalField(decimal_places=2, max_digits=40)  # ummumiy xisoblangan narx, bundan mijoz va ishchi kelishib narxni tushurishadi va final price fieldga qolda kiritiladi
     final_price = models.DecimalField(decimal_places=2, max_digits=40, null=True, blank=True)
-    price_per_product = models.DecimalField(decimal_places=2, max_digits=40, null=True, blank=True)
-    status = models.ForeignKey(Status, on_delete=models.CASCADE, related_name='orders')
-    branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
-    num_of_product_per_list = models.IntegerField(null=True, blank=True)
-    lists_per_paper = models.IntegerField(null=True, blank=True)
-    special_service_name = models.CharField(max_length=100, null=True, blank=True)
+    price_per_product = models.DecimalField(decimal_places=2, max_digits=40, null=True, blank=True) # har bir mahsulot uchun mijoz tolayatgan pul, yani final_price/products_qty
+    branch = models.ForeignKey(Branch, on_delete=models.CASCADE)    # zakaz qaysi branchda kiritilmoqda
+    num_of_product_per_list = models.IntegerField(null=True, blank=True)    # bitta listdan nechta mahsulot chiqadi
+    lists_per_paper = models.IntegerField(null=True, blank=True)    # skladdaki 1 ta raw paperdan nechta list chiqyapti, yani paper nechiga bolinyapti
+    special_service_name = models.CharField(max_length=100, null=True, blank=True)  # bazi zakazlar uchun qilinish kerak bolgan maxsus service bolishi mumkin
     special_service_amount = models.DecimalField(decimal_places=2, max_digits=40, null=True, blank=True, default=0)
+    closed_at = models.DateField(null=True, blank=True) # zakaz tugatilganda userdan soraladi qachon tugatildi deb, agar user kiritmasa current date olinadi.
 
     def save(self, *args, **kwargs):
         if not self.pk:  # If the order is being created (not updated)
@@ -99,6 +101,11 @@ class Order(models.Model):
             # add debt to customer if order is finished
             # if order in finished status is being updated, delete debt from customer
             if obj.status.name != "mijoz olib ketdi" and self.status.name == "mijoz olib ketdi":
+                
+                today = date.today()
+                if not self.closed_at:
+                    self.closed_at = today
+
                 total_paid = OrderPayment.objects.filter(order=self).aggregate(Sum('amount'))['amount__sum'] or 0
                 if total_paid < self.final_price and not CustomerDebt.objects.filter(order=self).exists():
                     CustomerDebt.objects.create(order=self, amount=self.final_price - total_paid, customer=self.customer)
