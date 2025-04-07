@@ -88,6 +88,7 @@ class Order(models.Model):
     special_service_name = models.CharField(max_length=100, null=True, blank=True)  # bazi zakazlar uchun qilinish kerak bolgan maxsus service bolishi mumkin
     special_service_amount = models.DecimalField(decimal_places=2, max_digits=40, null=True, blank=True, default=0)
     closed_at = models.DateField(null=True, blank=True) # zakaz tugatilganda userdan soraladi qachon tugatildi deb, agar user kiritmasa current date olinadi.
+    main_order = models.ForeignKey('Order', on_delete=models.CASCADE, null=True, blank=True)    # bu sub order create qilish uchun (multiple paper ishlatish uchun)
 
     def save(self, *args, **kwargs):
         if not self.pk:  # If the order is being created (not updated)
